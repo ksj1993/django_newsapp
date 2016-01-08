@@ -1,6 +1,9 @@
 from django import forms
+from django.forms import ModelForm
+from .models import Article
 
-class PostForm(forms.Form):
-	link_url = forms.CharField(label='Share a link', max_length=100)
-
+class ArticleForm(ModelForm):
+	class Meta:
+		model = Article
+		fields = ['url_link']
 	

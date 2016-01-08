@@ -10,4 +10,15 @@
     <input type="submit" value="Submit" />
 </form>
 
+{% if articles %}
+    <ul>
+        {% for article in articles %}
+        <li>{{ article.url_link }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <strong>There are no articles present.</strong>
+{% endif %}
+
+
 {% endblock content %}
