@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}
+{% load staticfiles %}
+
+
+{% block content %}
+
+<form action="/dashboard/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+</form>
+
+{% endblock content %}
