@@ -1,7 +1,10 @@
 {% extends "core/base.html" %}
 {% load staticfiles %}
 
+{% block head %}
 
+
+{% endblock head %}
 {% block content %}
 
 <form action="/dashboard/" method="post">
@@ -13,12 +16,13 @@
 {% if articles %}
     <ul>
         {% for article in articles %}
-        <li>{{ article.url_link }}</li>
+        	<li>{{ article.url }}</li>
         {% endfor %}
     </ul>
 {% else %}
     <strong>There are no articles present.</strong>
 {% endif %}
+
 
 
 {% endblock content %}

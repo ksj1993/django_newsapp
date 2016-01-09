@@ -5,5 +5,5 @@ from .models import Article
 class ArticleForm(ModelForm):
 	class Meta:
 		model = Article
-		fields = ['url_link']
+		fields = ['url']
 	

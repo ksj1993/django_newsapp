@@ -1,23 +1,53 @@
 import urllib2
 from bs4 import BeautifulSoup
+import shutil
+import requests
+from django.conf import settings as djangoSettings
+import uuid
 
-def scrape(url_page):
+class Scraper:
 
-	scraped_content = {}
+	def __init__(self, url_page):
+		self.webpage = urllib2.urlopen(url_page)
+		self.soup = BeautifulSoup(webpage)
 
-	url_page = urllib2.urlopen(new_article.url_link)
-	soup = BeautifulSoup(url_page)
+	def scrapeImage():
+		tag = soup.find( "meta", {"property": "og:image"})
+		if tag is not None:
+			image_url = tag['content']
+			response = requests.get(image_url, stream=True)
 
-	tag = bs.find("meta", {"property": "og:image"})
-	if tag is not None:
-		scraped_content['image'] = tag['content']
-	else:
-		# TODO choose first image
-		pass
-		
-	tag = bs.find("meta", {"property": "og:image"})
-	if tag is not None:
-		scraped_content['image'] = tag['content']
+			# TODO rel path
+			image_name = djangoSettings.MEDIA_ROOT + str(uuid.uuid4())
+			with open(image_name, 'wb') as out_file:
+				shutil.copyfileobj(response.raw, out_file)
+			del response
+			return image_name
+
+		else:
+			# TODO choose first image
+			return ""
+
+
+
+	def scrapeSitename():
+		tag = soup.find("meta", {"property": "og:site_name"})
+		if tag is not None:
+			return tag['content']
+		else:
+			# TODO 
+			return ""
+
+	def scrapeDescription():
+		tag = soup.find("meta", {"property": "og:description"})
+		if tag is not None:
+			return tag['content']
+		else:
+			# TODO 
+			return ""
+
+
+
 
 
 	
