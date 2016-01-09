@@ -8,11 +8,13 @@ import uuid
 class Scraper:
 
 	def __init__(self, url_page):
+		
 		self.webpage = urllib2.urlopen(url_page)
-		self.soup = BeautifulSoup(webpage)
+		self.soup = BeautifulSoup(self.webpage)
+	
 
-	def scrapeImage():
-		tag = soup.find( "meta", {"property": "og:image"})
+	def scrapeImage(self):
+		tag = self.soup.find( "meta", {"property": "og:image"})
 		if tag is not None:
 			image_url = tag['content']
 			response = requests.get(image_url, stream=True)
@@ -30,16 +32,16 @@ class Scraper:
 
 
 
-	def scrapeSitename():
-		tag = soup.find("meta", {"property": "og:site_name"})
+	def scrapeSitename(self):
+		tag = self.soup.find("meta", {"property": "og:site_name"})
 		if tag is not None:
 			return tag['content']
 		else:
 			# TODO 
 			return ""
 
-	def scrapeDescription():
-		tag = soup.find("meta", {"property": "og:description"})
+	def scrapeDescr(self):
+		tag = self.soup.find("meta", {"property": "og:description"})
 		if tag is not None:
 			return tag['content']
 		else:

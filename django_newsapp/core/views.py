@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .models import Article
 import sys
-from scraper import scrape
+from scraper import Scraper
 
 def index(request):
 	return render(request, 'core/index.html')
@@ -30,18 +30,20 @@ class DashboardView(View):
 	def post(self, request, *args, **kwargs):
 		form = self.form_class(request.POST)
 		if form.is_valid():
+
 			new_article = form.save(commit=False)
-		
-			metadata = scrape(new_article.url)
+			
+			
+			scraper = Scraper(new_article.url)
 			new_article.user = request.user
-			new_article.image = metadata["image"]
-			new_article.site_name = metadata["site_name"]
-			new_article.description = metadata["description"]
+			new_article.image = scraper.scrapeImage()
+			new_article.site_name = scraper.scrapeSitename()
+			new_article.description = scraper.scrapeDescr()
 
 			new_article.save()
-
 			return HttpResponse("Success")
-	
+		
+
 
 		forms.errors.as_data()
 
