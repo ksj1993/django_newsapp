@@ -9,7 +9,9 @@ import os, urllib
 from django.core.files import File 
 
 class Article(models.Model):
-	url = models.CharField(max_length=100)
+	url = models.CharField(max_length=500)
+	title = models.CharField(max_length= 300)
+	image_url = models.CharField(max_length=500)
 	image = models.ImageField(upload_to='images', blank=True)
 	site_name = models.CharField(max_length=100)
 	description = models.CharField(max_length=1000)

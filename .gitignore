@@ -2,4 +2,5 @@
 django_newsapp/django_newsapp/settings.py
 django_newsapp/static/*
 django_newsapp/media/*
-
+db.*
+.DS_Store

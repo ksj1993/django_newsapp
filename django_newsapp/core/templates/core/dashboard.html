@@ -2,9 +2,11 @@
 {% load staticfiles %}
 
 {% block head %}
-
+ <script src="{% static 'markup/js/masonry.pkgd.min.js' %}"></script>
 
 {% endblock head %}
+
+
 {% block content %}
 
 <form action="/dashboard/" method="post">
@@ -13,12 +15,16 @@
     <input type="submit" value="Submit" />
 </form>
 
+
+
+
+
+
 {% if articles %}
-    <ul>
         {% for article in articles %}
-        	<li>{{ article.url }}</li>
+        	<p>{{ article.title }}</p>
+        	<img src="{{ MEDIA_URL }}{{ article.image.url }}" />
         {% endfor %}
-    </ul>
 {% else %}
     <strong>There are no articles present.</strong>
 {% endif %}

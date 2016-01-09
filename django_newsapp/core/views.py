@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from .forms import ArticleForm
 from django.utils.decorators import method_decorator
@@ -30,21 +30,19 @@ class DashboardView(View):
 	def post(self, request, *args, **kwargs):
 		form = self.form_class(request.POST)
 		if form.is_valid():
-
 			new_article = form.save(commit=False)
-			
-			
 			scraper = Scraper(new_article.url)
 			new_article.user = request.user
-			new_article.image = scraper.scrapeImage()
+			new_article.image, new_article.image_url = scraper.scrapeImage()
+			new_article.title = scraper.scrapeTitle()
 			new_article.site_name = scraper.scrapeSitename()
 			new_article.description = scraper.scrapeDescr()
 
 			new_article.save()
-			return HttpResponse("Success")
+
+
+			return HttpResponseRedirect('/dashboard/')
 		
-
-
 		forms.errors.as_data()
 
 		return render(request, self.template_name, {'form': form_class})

@@ -4,6 +4,8 @@ import shutil
 import requests
 from django.conf import settings as djangoSettings
 import uuid
+from .models import Article
+import sys
 
 class Scraper:
 
@@ -17,20 +19,33 @@ class Scraper:
 		tag = self.soup.find( "meta", {"property": "og:image"})
 		if tag is not None:
 			image_url = tag['content']
-			response = requests.get(image_url, stream=True)
-
-			# TODO rel path
-			image_name = djangoSettings.MEDIA_ROOT + str(uuid.uuid4())
-			with open(image_name, 'wb') as out_file:
-				shutil.copyfileobj(response.raw, out_file)
-			del response
-			return image_name
-
+			print >> sys.stderr, image_url
+			article = Article.objects.filter(image_url = image_url).first()
+			if article is None:
+				response = requests.get(image_url, stream=True)
+				extension = image_url.rsplit(".", 1)[-1]
+				image_name = str(uuid.uuid4())
+				print >> sys.stderr, image_name
+				# TODO rel path
+				image_path = djangoSettings.MEDIA_ROOT + "/" + image_name
+				with open(image_path, 'wb') as out_file:
+					shutil.copyfileobj(response.raw, out_file)
+				del response
+				return (image_name, image_url)
+			else:
+				# image already exists
+				return (article.image.name, image_url)
 		else:
-			# TODO choose first image
+			# TODO choose first image, currently default
+			return "default.png"
+
+	def scrapeTitle(self):
+		tag = self.soup.find( "meta", {"property": "og:title"})
+		if tag is not None:
+			return tag['content']
+		else:
+			#TODO
 			return ""
-
-
 
 	def scrapeSitename(self):
 		tag = self.soup.find("meta", {"property": "og:site_name"})
