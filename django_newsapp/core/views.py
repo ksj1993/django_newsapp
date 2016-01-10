@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
-from .forms import ArticleForm, FollowForm
+from .forms import ArticleForm, FollowForm, ProfileForm
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -15,19 +15,11 @@ def index(request):
 def follow(request):
 	pass
 
-def profile(request):
-	form = FollowForm(request.POST)
-	if form.is_valid():
-		user_profile = form.cleaned_data['profile']
-		user_profile = User.objects.get(username = user_profile)
-		user_articles = Article.objects.filter(user = user_profile)
-		content = {
-			'user_profile': user_profile,
-			'user_articles': user_articles,
-		}
-		return render(request, 'core/profile.html', context)
-
-	return HttpResponse("User cannot be found")
+@login_required
+def profile(request, profile_id):
+	user_profile = User.objects.get(id = user_profile)
+	
+	return HttpResponse(profile_id)
 
 class DashboardView(View):
 	template_name = 'core/dashboard.html'
@@ -47,6 +39,7 @@ class DashboardView(View):
 		context = {
 		'articleform': ArticleForm,
 		'followform': FollowForm,
+		'profileform': ProfileForm,
 		'my_articles': my_articles,
 		'followee_articles': followee_articles,
 		'followees': followee_set
@@ -89,6 +82,13 @@ class DashboardView(View):
 				#TODO errors
 				pass
 
-
-		return HttpResponse('error')
+		if 'ProfileSubmit' in request.POST:
+			form = ProfileForm(request.POST)
+			if form.is_valid():
+				user_profile = form.cleaned_data['profile']
+				user_profile = User.objects.get(username = user_profile)
+				return HttpResponseRedirect("/profile/" + str(user_profile.id))
+			else:
+				return HttpResponse('error')
+		return HttpResponse("Something went wrong")
 

@@ -19,5 +19,5 @@ class SignupForm(forms.Form):
 		user.last_name = self.cleaned_data['last_name']
 		user.save()
 
-class FollowForm(forms.Form):
+class ProfileForm(forms.Form):
 	profile = forms.CharField(label='Search for user', max_length=100)

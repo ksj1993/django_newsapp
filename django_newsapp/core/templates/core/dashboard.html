@@ -48,7 +48,7 @@
 </form>
 -->
 
-<form action="/profile/" method="post">
+<form action="/dashboard/" method="post">
     {% csrf_token %}
     {{ profileform.as_p }}
   	<input type="submit" name="ProfileSubmit" value="Submit" />
