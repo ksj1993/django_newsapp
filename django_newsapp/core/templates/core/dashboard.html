@@ -2,32 +2,72 @@
 {% load staticfiles %}
 
 {% block head %}
- <script src="{% static 'markup/js/masonry.pkgd.min.js' %}"></script>
+
+<script src="{% static 'markup/js/isotope.pkgd.min.js' %}"></script>
+<script src="{% static 'markup/js/masonry.pkgd.min.js' %}"></script>
+<script src="{% static 'markup/js/imagesloaded.pkgd.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'markup/css/masonry.css' %}" />
+
+
+<script>
+// external js: masonry.pkgd.js, imagesloaded.pkgd.js
+
+$(document).ready( function() {
+  // init Masonry
+  var $grid = $('.grid').masonry({
+    itemSelector: '.grid-item',
+    percentPosition: true,
+    columnWidth: '.grid-sizer',
+    gutter: 10,
+  });
+  // layout Isotope after each image loads
+  $grid.imagesLoaded().progress( function() {
+    $grid.masonry();
+  });  
+
+});
+
+</script>
 
 {% endblock head %}
 
 
 {% block content %}
 
+
+
 <form action="/dashboard/" method="post">
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
+    {{ articleform.as_p }}
+  	<input type="submit" name="ArticleSubmit" value="Submit" />
 </form>
 
+<form action="/dashboard/" method="post">
+    {% csrf_token %}
+    {{ followform.as_p }}
+  	<input type="submit" name="FollowSubmit" value="Submit" />
+</form>
 
-
-
-
-
-{% if articles %}
-        {% for article in articles %}
-        	<p>{{ article.title }}</p>
-        	<img src="{{ MEDIA_URL }}{{ article.image.url }}" />
-        {% endfor %}
-{% else %}
-    <strong>There are no articles present.</strong>
+{% if followees %}
+	{% for followee in followees %}
+		<p> {{ followee.user.username }} {{ followee.user.first_name }} {{ followee.user.last_name }}</p>
+	{% endfor %}
 {% endif %}
+
+<div class="grid">
+  <div class="grid-sizer"></div>
+
+  {% if articles %}
+  	{% for article in articles %}
+  <div class="grid-item">
+	<img src="{{ MEDIA_URL }}{{ article.image.url }}" />
+  </div>
+  	{% endfor %}
+  {% endif %}
+ 
+</div>
+
+
 
 
 
