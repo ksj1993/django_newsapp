@@ -3,34 +3,32 @@
 
 {% block head %}
 
-<script src="{% static 'markup/js/isotope.pkgd.min.js' %}"></script>
 <script src="{% static 'markup/js/masonry.pkgd.min.js' %}"></script>
 <script src="{% static 'markup/js/imagesloaded.pkgd.min.js' %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'markup/css/masonry.css' %}" />
 
 
-<script>
-// external js: masonry.pkgd.js, imagesloaded.pkgd.js
+<script type="text/javascript">
 
-$(document).ready( function() {
-  // init Masonry
-  var $grid = $('.grid').masonry({
-    itemSelector: '.grid-item',
-    percentPosition: true,
-    columnWidth: '.grid-sizer',
-    gutter: 10,
-  });
-  // layout Isotope after each image loads
-  $grid.imagesLoaded().progress( function() {
-    $grid.masonry();
-  });  
+	// external js: masonry.pkgd.js, imagesloaded.pkgd.js
 
-});
+	$(document).ready( function() {
+	  // init Masonry
+	  var $grid = $('.grid').masonry({
+	    itemSelector: '.grid-item',
+	    percentPosition: true,
+	    columnWidth: '.grid-sizer'
+	  });
+	  // layout Isotope after each image loads
+	  $grid.imagesLoaded().progress( function() {
+	    $grid.masonry();
+	  });  
+
+	});
 
 </script>
 
 {% endblock head %}
-
 
 {% block content %}
 
@@ -42,33 +40,46 @@ $(document).ready( function() {
   	<input type="submit" name="ArticleSubmit" value="Submit" />
 </form>
 
+<!--
 <form action="/dashboard/" method="post">
     {% csrf_token %}
     {{ followform.as_p }}
   	<input type="submit" name="FollowSubmit" value="Submit" />
 </form>
+-->
 
-{% if followees %}
-	{% for followee in followees %}
-		<p> {{ followee.user.username }} {{ followee.user.first_name }} {{ followee.user.last_name }}</p>
-	{% endfor %}
-{% endif %}
+<form action="/profile/" method="post">
+    {% csrf_token %}
+    {{ profileform.as_p }}
+  	<input type="submit" name="ProfileSubmit" value="Submit" />
+</form>
 
-<div class="grid">
-  <div class="grid-sizer"></div>
+<div class="row">
+	  
+	<div class="col-md-1"></div>
+	<div class="col-md-10">
+		<div class="grid">
+		  <div class="grid-sizer"></div>
 
-  {% if articles %}
-  	{% for article in articles %}
-  <div class="grid-item">
-	<img src="{{ MEDIA_URL }}{{ article.image.url }}" />
-  </div>
-  	{% endfor %}
-  {% endif %}
- 
+		  {% for article in followee_articles %}
+
+		  <div class="grid-item">
+		    <img src="{{ MEDIA_URL }}{{ article.image.url }}" />
+		  </div>
+
+		  {% endfor %}
+		</div>
+	</div>
+	<div class="col-md-1"></div>
+
+
+
 </div>
 
-
-
-
+	{% if followees %}
+		{% for followee in followees %}
+			<p> {{ followee.user.username }} {{ followee.user.first_name }} {{ followee.user.last_name }}</p>
+		{% endfor %}
+	{% endif %}
 
 {% endblock content %}

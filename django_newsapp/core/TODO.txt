@@ -1,6 +1,3 @@
-- follow form
-- follow on post
-- change to display follow
 - add buttons, my article, other articles
 - create user profile page
 

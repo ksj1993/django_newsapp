@@ -8,16 +8,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <script src="{% static 'markup/js/jquery-1.11.3.min.js' %}"></script>
-        
-
-
         <link rel="stylesheet" type="text/css" href="{% static 'markup/css/bootstrap.min.css' %}" />
+     
         <script src="{% static 'markup/js/bootstrap.min.js' %}"></script>
-
          {% block head %}{% endblock head %}
+
     </head>
 
     <body>
-    {% block content %}{% endblock content %}
+        {% block content %}{% endblock content %}
     </body>
 </html>

@@ -1,0 +1,40 @@
+{% extends "core/base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+
+<script src="{% static 'markup/js/masonry.pkgd.min.js' %}"></script>
+<script src="{% static 'markup/js/imagesloaded.pkgd.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'markup/css/masonry.css' %}" />
+
+
+<script type="text/javascript">
+
+	// external js: masonry.pkgd.js, imagesloaded.pkgd.js
+
+	$(document).ready( function() {
+	  // init Masonry
+	  var $grid = $('.grid').masonry({
+	    itemSelector: '.grid-item',
+	    percentPosition: true,
+	    columnWidth: '.grid-sizer'
+	  });
+	  // layout Isotope after each image loads
+	  $grid.imagesLoaded().progress( function() {
+	    $grid.masonry();
+	  });  
+
+	});
+
+</script>
+
+
+
+{% endblock head %}
+
+{% block content %}
+
+
+
+
+{% endblock content %}

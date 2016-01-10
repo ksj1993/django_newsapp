@@ -15,7 +15,19 @@ def index(request):
 def follow(request):
 	pass
 
+def profile(request):
+	form = FollowForm(request.POST)
+	if form.is_valid():
+		user_profile = form.cleaned_data['profile']
+		user_profile = User.objects.get(username = user_profile)
+		user_articles = Article.objects.filter(user = user_profile)
+		content = {
+			'user_profile': user_profile,
+			'user_articles': user_articles,
+		}
+		return render(request, 'core/profile.html', context)
 
+	return HttpResponse("User cannot be found")
 
 class DashboardView(View):
 	template_name = 'core/dashboard.html'
@@ -25,15 +37,18 @@ class DashboardView(View):
 		return super(DashboardView, self).dispatch(*args, **kwargs)
 
 	def get(self, request, *args, **kwargs):
-		articles = Article.objects.filter(user = request.user)
+		my_articles = Article.objects.filter(user = request.user)
 		followee_set = UserProfile.objects.get(user = request.user).follows.all()
 		followee_set_users = [profile.user for profile in followee_set]
-		articles = Article.objects.filter(user__in = followee_set_users)
+
+		# TODO change to distinct
+		followee_articles = Article.objects.filter(user__in = followee_set_users)
 
 		context = {
 		'articleform': ArticleForm,
 		'followform': FollowForm,
-		'articles': articles,
+		'my_articles': my_articles,
+		'followee_articles': followee_articles,
 		'followees': followee_set
 		}
 
@@ -73,6 +88,7 @@ class DashboardView(View):
 			else:
 				#TODO errors
 				pass
+
 
 		return HttpResponse('error')
 
