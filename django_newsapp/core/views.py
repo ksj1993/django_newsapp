@@ -6,20 +6,40 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Article, UserProfile
+
 import sys
 from scraper import Scraper
 
 def index(request):
 	return render(request, 'core/index.html')
 
-def follow(request):
-	pass
 
 @login_required
 def profile(request, profile_id):
-	user_profile = User.objects.get(id = user_profile)
-	
-	return HttpResponse(profile_id)
+
+	user_profile = User.objects.get(id = profile_id)
+	user_articles = Article.objects.filter(user = user_profile)
+
+	context = {
+		'user_profile': user_profile,
+		'user_articles': user_articles
+	}
+	return render(request, 'core/profile.html', context)
+
+@login_required
+def follow(request):
+	if 'FollowSubmit' in request.POST:
+		form = FollowForm(request.POST)
+		if form.is_valid():
+			new_followee = form.cleaned_data['followee']
+			new_followee = User.objects.get(username = new_followee)
+			if new_followee is not None:
+				UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
+   				return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+			return HttpResponse("error")
+		else:
+			#TODO errors
+			pass
 
 class DashboardView(View):
 	template_name = 'core/dashboard.html'
@@ -66,20 +86,6 @@ class DashboardView(View):
 
 			else:
 				# TODO errors
-				pass
-
-		if 'FollowSubmit' in request.POST:
-			form = FollowForm(request.POST)
-			if form.is_valid():
-				new_followee = form.cleaned_data['followee']
-				new_followee = User.objects.get(username = new_followee)
-				if new_followee is not None:
-					UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
-					return HttpResponseRedirect('/dashboard/')
-
-				return HttpResponse("error")
-			else:
-				#TODO errors
 				pass
 
 		if 'ProfileSubmit' in request.POST:

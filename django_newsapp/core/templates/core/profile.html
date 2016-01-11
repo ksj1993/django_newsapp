@@ -2,58 +2,15 @@
 {% load staticfiles %}
 
 {% block head %}
-
-<script src="{% static 'markup/js/masonry.pkgd.min.js' %}"></script>
-<script src="{% static 'markup/js/imagesloaded.pkgd.min.js' %}"></script>
-<link rel="stylesheet" type="text/css" href="{% static 'markup/css/masonry.css' %}" />
-
-
-<script type="text/javascript">
-
-	// external js: masonry.pkgd.js, imagesloaded.pkgd.js
-
-	$(document).ready( function() {
-	  // init Masonry
-	  var $grid = $('.grid').masonry({
-	    itemSelector: '.grid-item',
-	    percentPosition: true,
-	    columnWidth: '.grid-sizer'
-	  });
-	  // layout Isotope after each image loads
-	  $grid.imagesLoaded().progress( function() {
-	    $grid.masonry();
-	  });  
-
-	});
-
-</script>
-
-
-
 {% endblock head %}
 
 {% block content %}
 
-<h2> {{ user_profile.username }} </h2>
+{% for article in user_articles %}
 
-<div class="row">
-	  
-	<div class="col-md-1"></div>
-	<div class="col-md-10">
-		<div class="grid">
-		  <div class="grid-sizer"></div>
-
-		  {% for article in user_articles %}
-
-		  <div class="grid-item">
-		    <img src="{{ MEDIA_URL }}{{ article.image.url }}" />
-		  </div>
-
-		  {% endfor %}
-		</div>
-	</div>
-	<div class="col-md-1"></div>
-
+<div>		
+<img src="{{ MEDIA_URL }}{{ article.image.url }}" />
 </div>
 
+{% endfor %}
 {% endblock content %}
