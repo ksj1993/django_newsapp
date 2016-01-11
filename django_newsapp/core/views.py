@@ -17,11 +17,11 @@ def index(request):
 @login_required
 def create_article(request):
 	if request.method == 'POST':
-		print >> sys.stderr, "PRINT 1" 
+		
 		form = ArticleForm(request.POST)
 
 		if form.is_valid():
-			print >> sys.stderr, "PRINT 2" 
+			
 			new_article = form.save(commit=False)
 			scraper = Scraper(new_article.url)
 			new_article.user = request.user
@@ -33,7 +33,13 @@ def create_article(request):
 	
 
 			response_data = {
-				'url': new_article.url,
+				'article_url': new_article.url,
+				'article_image': new_article.image.url,
+				'article_title': new_article.title,
+				'article_site_name': new_article.site_name,
+				'article_user': new_article.user,
+				'article_user_id': new_article.user.id,
+				'article_description': new_article.description,
 			}
 
 			return HttpResponse(
@@ -41,19 +47,24 @@ def create_article(request):
 				content_type="application/json"
 			)
 		else:
-			print >> sys.stderr, "PRINT 3" 
+			# TODO errors
 			return HttpResponse(
-			json.dumps({"nothing to see": "Error"}),
+			json.dumps({"Error": "error"}),
 			content_type="application/json"
 		)
 	else:
-		print >> sys.stderr, "PRINT 4" 
+		# TODO errors
 		return HttpResponse(
-			json.dumps({"nothing to see": "this isn't happening"}),
+			json.dumps({"Error": "error"}),
 			content_type="application/json"
 		)
 
 
+@login_required
+def delete_article(request, article_id):
+	if request.method == 'POST':
+		Article.objects.get(id = article_id).delete()
+		return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class ProfileView(View):
 	template_name = 'core/profile.html'
@@ -64,20 +75,37 @@ class ProfileView(View):
 
 	def get(self, request, *args, **kwargs):
 		my_profile = UserProfile.objects.get(user = request.user)
-		my_articles = Article.objects.filter(user = request.user)
+		my_articles = Article.objects.filter(user = request.user).all()[:20]
 
 		if my_articles:	
 			context = {
 				'my_profile': my_profile,
-				'my_articles': my_articles			}
+				'my_articles': my_articles	
+			}
 			return render(request, self.template_name, context)
 		else:
 			# return discovery stuff
-			pass
+			context = {
+
+			}
+			# for now
+			return render(request, self.template_name, context)
 
 	def post(self, request, *args, **kwargs):
-		# Nothing for now
-		return HttpResponseRedirect('/profile/')
+		form = ArticleForm(request.POST)
+		if form.is_valid():
+			new_article = form.save(commit=False)
+			scraper = Scraper(new_article.url)
+			new_article.user = request.user
+			new_article.image, new_article.image_url = scraper.scrapeImage()
+			new_article.title = scraper.scrapeTitle()
+			new_article.site_name = scraper.scrapeSitename()
+			new_article.description = scraper.scrapeDescr()
+			new_article.save()
+
+			return HttpResponseRedirect('/profile/')
+		return HttpResponse("Error")
+
 
 
 @login_required
@@ -92,6 +120,7 @@ def user(request, user_id):
 	}
 
 	return render(request, 'core/user.html', context)
+	
 
 def discover(request):
 	# TODO top articles

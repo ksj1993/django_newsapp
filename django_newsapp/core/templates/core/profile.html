@@ -2,7 +2,8 @@
 {% load staticfiles %}
 
 {% block head %}
-  <script src="{% static 'markup/js/main.js' %}"></script>
+  
+<script src="{% static 'markup/js/main.js' %}"></script>
 
   <style type="text/css">
   body {
@@ -34,19 +35,19 @@
 <div class="ui main container">
 	<div class="ui header"> <h1> My Articles </h1> 
 
-		<form action="/create_article/" method="POST" class="ui form" id="article-form">
+		<form action="/profile/" method="POST" class="ui form" id="article-form">
 			{% csrf_token %} 
 			<div class="field">
 		    	<input id="url" type="text" name="url" placeholder="Post a link">
 		    </div>
 		    <input type="submit" value="Submit" class="ui submit button">
-		    <div id="results"></div>
-		    <div id="new_article"></div>
+		    
 		</form>
 
 
 
 	</div>
+
 
 	{% if my_articles %}
 	<div class="ui four cards">
@@ -76,19 +77,22 @@
 		    <div class="ui button">
 		      Like
 		    </div>
-		    <div class="ui button">
-		      Post
+		    <div class="ui button" action="/delete/{{ article.id }}">
+		      Delete
 		    </div>
 		  </div>
 
 		</div>
 		{% endfor %}
 	</div>
+
 	{% else %}
 
 	<!-- ADD DISCOVER LOGIC -->
 
 	{% endif %}
+
+
 
 </div>
 

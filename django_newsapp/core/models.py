@@ -22,6 +22,10 @@ class UserProfile(models.Model):
 	def __unicode__(self):
 		return self.user.username
 
+class ArticleCounts(models.Model):
+	article = models.ForeignKey(Article)
+	count = models.IntegerField()
+
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		UserProfile.objects.create(user=instance)
