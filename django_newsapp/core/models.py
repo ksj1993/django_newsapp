@@ -13,9 +13,6 @@ class Article(models.Model):
 	description = models.CharField(max_length=1000)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-class Post(models.Model):
-	text = models.CharField(max_length=500)
-
 class UserProfile(models.Model):
 	user = AutoOneToOneField('auth.user')
 	follows = models.ManyToManyField('UserProfile', related_name='followed_by')
