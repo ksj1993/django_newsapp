@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
-from .forms import ArticleForm, FollowForm, ProfileForm
+from .forms import ArticleForm, FollowForm, ProfileForm, PostForm
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Article, UserProfile
+from .models import Article, UserProfile, Post
 from django.utils.html import escape
 from django.utils.html import escape
 
@@ -14,6 +14,30 @@ from scraper import Scraper
 
 def index(request):
 	return render(request, 'core/index.html')
+
+@login_required
+def create_article(request):
+	if request.method == 'POST':
+		post_text = request.POST.get('the_post')
+		response_data = {}
+
+		post = Post(text=post_text)
+		post.save()
+
+		response_data['text'] = post.text
+	 
+
+		return HttpResponse(
+			json.dumps(response_data),
+			content_type="application/json"
+		)
+	else:
+		return HttpResponse(
+			json.dumps({"nothing to see": "this isn't happening"}),
+			content_type="application/json"
+		)
+
+
 
 class ProfileView(View):
 	template_name = 'core/profile.html'
@@ -25,10 +49,12 @@ class ProfileView(View):
 	def get(self, request, *args, **kwargs):
 		my_profile = UserProfile.objects.get(user = request.user)
 		my_articles = Article.objects.filter(user = request.user)
+
 		if my_articles:	
 			context = {
 				'my_profile': my_profile,
-				'my_articles': my_articles
+				'my_articles': my_articles,
+				'form': PostForm
 			}
 			return render(request, self.template_name, context)
 		else:
@@ -48,6 +74,7 @@ class ProfileView(View):
 
 			new_article.save()
 			return HttpResponseRedirect('/profile/')
+
 
 @login_required
 def user(request, user_id):
@@ -76,7 +103,7 @@ def follow(request):
 			new_followee = User.objects.get(username = new_followee)
 			if new_followee is not None:
 				UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
-   				return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+				return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 			return HttpResponse("error")
 		else:
 			#TODO errors

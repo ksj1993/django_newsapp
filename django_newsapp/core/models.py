@@ -13,7 +13,8 @@ class Article(models.Model):
 	description = models.CharField(max_length=1000)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-	
+class Post(models.Model):
+	text = models.CharField(max_length=500)
 
 class UserProfile(models.Model):
 	user = AutoOneToOneField('auth.user')
@@ -25,7 +26,7 @@ class UserProfile(models.Model):
 		return self.user.username
 
 def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
+	if created:
+		UserProfile.objects.create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)

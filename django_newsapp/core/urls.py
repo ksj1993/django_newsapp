@@ -10,4 +10,5 @@ urlpatterns = [
 	url(r'^dashboard/', views.DashboardView.as_view()),
 	url(r'^profile/', views.ProfileView.as_view()),
 	url(r'^users/(?P<user_id>[0-9]+)/$', views.user, name='user'),
+	url(r'^create_article/', views.create_article),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

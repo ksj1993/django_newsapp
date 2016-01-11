@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Article
+from .models import Article, Post
 
 class ArticleForm(ModelForm):
 	class Meta:
@@ -21,3 +21,16 @@ class SignupForm(forms.Form):
 
 class ProfileForm(forms.Form):
 	profile = forms.CharField(label='Search for user', max_length=100)
+
+
+
+class PostForm(ModelForm):
+	class Meta:
+		model = Post
+		# exclude = ['author', 'updated', 'created', ]
+		fields = ['text']
+		widgets = {
+			'text': forms.TextInput(
+				attrs={'id': 'post-text', 'required': True, 'placeholder': 'Say something...'}
+			),
+		}
