@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/base2.html" %}
 {% load staticfiles %}
 
 {% block head %}
@@ -26,28 +26,20 @@
 
 {% block content %}
 
-<div class="ui fixed inverted menu">
-    <div class="ui container">
- 
-      <a href="/dashboard/" class="header item">
-        <!--<img class="logo" src="./Fixed Menu Example - Semantic_files/logo.png">-->
-        Newsapp
-      </a>
-  
-      <a href="/dashboard/" class="item">My Feed</a>
-      <a href="/profile/" class="item">My Links</a>
-      <a href="#" class="item">Discover</a>
-
-	  <div class="right item">
-		 <a href="#" class="item">Log Out</a>
-	  </div>
-
-    </div>
-</div>
 
 
 <div class="ui main container">
-	<div class="ui header"> <h1> My Articles </h1> </div>
+	<div class="ui header"> <h1> My Articles </h1> 
+
+		<form action="/profile/" method="post" class="ui form">
+			{% csrf_token %} 
+			<div class="field">
+		    	<input id="url" type="text" name="url" placeholder="Post a link">
+		    </div>
+		    <input type="submit" value="Submit" class="ui submit button">
+		</form>
+
+	</div>
 
 	{% if my_articles %}
 	<div class="ui four cards">
@@ -68,6 +60,7 @@
 		    <div class="description">
 		    	{{ article.description }} <br><br>
 		    	<p> Posted by <a href="/profile/{{ article.user.id }}/"> {{ article.user }} </a></p>
+
 		    </div>
 		  </div>
 		  
@@ -85,6 +78,9 @@
 		{% endfor %}
 	</div>
 	{% else %}
+
+	<!-- ADD DISCOVER LOGIC -->
+
 	{% endif %}
 
 </div>

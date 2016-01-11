@@ -6,6 +6,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Article, UserProfile
+from django.utils.html import escape
+from django.utils.html import escape
 
 import sys
 from scraper import Scraper
@@ -13,29 +15,52 @@ from scraper import Scraper
 def index(request):
 	return render(request, 'core/index.html')
 
-@login_required
-def profile(request):
+class ProfileView(View):
+	template_name = 'core/profile.html'
 
-	my_profile = UserProfile.objects.get(user = request.user)
-	my_articles = Article.objects.filter(user = request.user)
-	context = {
-		'my_profile': my_profile,
-		'my_articles': my_articles
-	}
-	return render(request, 'core/profile.html', context)
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super(ProfileView, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		my_profile = UserProfile.objects.get(user = request.user)
+		my_articles = Article.objects.filter(user = request.user)
+		if my_articles:	
+			context = {
+				'my_profile': my_profile,
+				'my_articles': my_articles
+			}
+			return render(request, self.template_name, context)
+		else:
+			# return discovery stuff
+			pass
+
+	def post(self, request, *args, **kwargs):
+		form = ArticleForm(request.POST)
+		if form.is_valid():
+			new_article = form.save(commit=False)
+			scraper = Scraper(new_article.url)
+			new_article.user = request.user
+			new_article.image, new_article.image_url = scraper.scrapeImage()
+			new_article.title = scraper.scrapeTitle()
+			new_article.site_name = scraper.scrapeSitename()
+			new_article.description = scraper.scrapeDescr()
+
+			new_article.save()
+			return HttpResponseRedirect('/profile/')
 
 @login_required
 def user(request, user_id):
 
 	user_profile = User.objects.get(id = user_id)
 	user_articles = Article.objects.filter(user = user_profile).all()[:20]
-	
+
 	context = {
 		'user_profile': user_profile,
 		'user_articles': user_articles
 	}
-	
-	return render(request, 'core/users.html', context)
+
+	return render(request, 'core/user.html', context)
 
 def discover(request):
 	# TODO top articles
@@ -72,17 +97,15 @@ class DashboardView(View):
 		followee_articles = Article.objects.filter(user__in = followee_set_users).all()[:20]
 
 		context = {
-		'articleform': ArticleForm,
-		'followform': FollowForm,
-		'profileform': ProfileForm,
 		'followee_articles': followee_articles,
 		'followees': followee_set
 		}
 
 		return render(request, self.template_name, context)
 
+
+
 	def post(self, request, *args, **kwargs):
-		print >> sys.stderr, request.POST
 
 		if 'ArticleSubmit' in request.POST:
 			form = ArticleForm(request.POST)
@@ -107,7 +130,7 @@ class DashboardView(View):
 			if form.is_valid():
 				user_profile = form.cleaned_data['profile']
 				user_profile = User.objects.get(username = user_profile)
-				return HttpResponseRedirect("/profile/" + str(user_profile.id))
+				return HttpResponseRedirect("/user/" + str(user_profile.id))
 			else:
 				return HttpResponse('error')
 		return HttpResponse("Something went wrong")
