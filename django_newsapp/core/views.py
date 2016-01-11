@@ -13,18 +13,34 @@ from scraper import Scraper
 def index(request):
 	return render(request, 'core/index.html')
 
+@login_required
+def profile(request):
+
+	my_profile = UserProfile.objects.get(user = request.user)
+	my_articles = Article.objects.filter(user = request.user)
+	context = {
+		'my_profile': my_profile,
+		'my_articles': my_articles
+	}
+	return render(request, 'core/profile.html', context)
 
 @login_required
-def profile(request, profile_id):
+def user(request, user_id):
 
-	user_profile = User.objects.get(id = profile_id)
-	user_articles = Article.objects.filter(user = user_profile)
-
+	user_profile = User.objects.get(id = user_id)
+	user_articles = Article.objects.filter(user = user_profile).all()[:20]
+	
 	context = {
 		'user_profile': user_profile,
 		'user_articles': user_articles
 	}
-	return render(request, 'core/profile.html', context)
+	
+	return render(request, 'core/users.html', context)
+
+def discover(request):
+	# TODO top articles
+	# TODO top users
+	pass
 
 @login_required
 def follow(request):
@@ -49,18 +65,16 @@ class DashboardView(View):
 		return super(DashboardView, self).dispatch(*args, **kwargs)
 
 	def get(self, request, *args, **kwargs):
-		my_articles = Article.objects.filter(user = request.user)
 		followee_set = UserProfile.objects.get(user = request.user).follows.all()
 		followee_set_users = [profile.user for profile in followee_set]
 
 		# TODO change to distinct
-		followee_articles = Article.objects.filter(user__in = followee_set_users)
+		followee_articles = Article.objects.filter(user__in = followee_set_users).all()[:20]
 
 		context = {
 		'articleform': ArticleForm,
 		'followform': FollowForm,
 		'profileform': ProfileForm,
-		'my_articles': my_articles,
 		'followee_articles': followee_articles,
 		'followees': followee_set
 		}

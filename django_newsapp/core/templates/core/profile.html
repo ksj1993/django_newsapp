@@ -2,15 +2,91 @@
 {% load staticfiles %}
 
 {% block head %}
+
+  <style type="text/css">
+  body {
+    background-color: #FFFFFF;
+  }
+  .ui.menu .item img.logo {
+    margin-right: 1.5em;
+  }
+  .main.container {
+    margin-top: 7em;
+  }
+  .wireframe {
+    margin-top: 2em;
+  }
+  .ui.footer.segment {
+    margin: 5em 0em 0em;
+    padding: 5em 0em;
+  }
+  </style>
+
 {% endblock head %}
 
 {% block content %}
 
-{% for article in user_articles %}
+<div class="ui fixed inverted menu">
+    <div class="ui container">
+ 
+      <a href="/dashboard/" class="header item">
+        <!--<img class="logo" src="./Fixed Menu Example - Semantic_files/logo.png">-->
+        Newsapp
+      </a>
+  
+      <a href="/dashboard/" class="item">My Feed</a>
+      <a href="/profile/" class="item">My Links</a>
+      <a href="#" class="item">Discover</a>
 
-<div>		
-<img src="{{ MEDIA_URL }}{{ article.image.url }}" />
+	  <div class="right item">
+		 <a href="#" class="item">Log Out</a>
+	  </div>
+
+    </div>
 </div>
 
-{% endfor %}
+
+<div class="ui main container">
+	<div class="ui header"> <h1> My Articles </h1> </div>
+
+	{% if my_articles %}
+	<div class="ui four cards">
+		{% for article in my_articles %}
+		<div class="ui card">
+		  <div class="image">
+		    <img src="{{ MEDIA_URL }}{{ article.image.url }}">
+		  </div>
+		  <div class="content">
+		    <div class="header">
+		    	<a href="{{ article.url }}"> {{ article.title }} </a>
+		    </div>
+		   
+		    <div class="meta">
+		      <a class="group">{{ article.site_name}}</a>
+		    </div>
+		
+		    <div class="description">
+		    	{{ article.description }} <br><br>
+		    	<p> Posted by <a href="/profile/{{ article.user.id }}/"> {{ article.user }} </a></p>
+		    </div>
+		  </div>
+		  
+
+		  <div class="ui two bottom attached buttons">
+		    <div class="ui button">
+		      Like
+		    </div>
+		    <div class="ui button">
+		      Post
+		    </div>
+		  </div>
+
+		</div>
+		{% endfor %}
+	</div>
+	{% else %}
+	{% endif %}
+
+</div>
+
 {% endblock content %}
