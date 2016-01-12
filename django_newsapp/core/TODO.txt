@@ -1,6 +1,9 @@
-- add buttons, my article, other articles
-- create user profile page
-
-- recommendations
-- likes
-- most recommended
+Things to do:
+- implement Postgres
+- fix Beautiful Soup
+- add profile page
+- add to discover page
+- add alternative to OG
+- like articles
+- most recommended / most posted
+- Front page
