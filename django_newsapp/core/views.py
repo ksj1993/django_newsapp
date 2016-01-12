@@ -11,6 +11,8 @@ from django.utils.html import escape
 import sys, json, datetime
 from scraper import Scraper
 from django.utils import timezone
+from urlparse import urlparse
+
 
 def index(request):
 	return render(request, 'core/index.html')
@@ -26,6 +28,13 @@ def create_article(request):
 			
 			# Create new article
 			new_article = form.save(commit=False)
+
+			cleaner = urlparse(new_article.url)
+			cleaned_url = "http://" + cleaner.netloc + cleaner.path
+			print >> sys.stderr, "CLEANED URL: " + cleaned_url
+			new_article.url = cleaned_url
+
+
 			scraper = Scraper(new_article.url)
 			new_article.user = request.user
 			new_article.image, new_article.image_url = scraper.scrapeImage()
@@ -156,8 +165,13 @@ class DiscoverView(View):
 		#top_articles = ArticleCount.objects.all().order_by('-count')
 		date_from = datetime.datetime.now() - datetime.timedelta(days=1)
 		
+		### Wait for Postgres install
+		###
 		top_articles = Article.objects.filter(pub_date__gte=date_from).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
 		top_articles_inc = Article.objects.filter(url__in = top_articles).distinct('url')
+
+		###
+		###
 		print >> sys.stderr, top_articles
 		print >> sys.stderr, top_articles_inc
 		context = {

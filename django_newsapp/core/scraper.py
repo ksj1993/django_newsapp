@@ -1,19 +1,17 @@
-import urllib2
+import urllib, urllib2, shutil, shutil, uuid, sys, requests
+from cookielib import CookieJar
 from bs4 import BeautifulSoup
-import shutil
-import requests
 from django.conf import settings as djangoSettings
-import uuid
 from .models import Article
-import sys
 
 class Scraper:
 
 	def __init__(self, url_page):
+		cj = CookieJar()
+		opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 		
-		self.webpage = urllib2.urlopen(url_page)
+		self.webpage = opener.open(url_page)
 		self.soup = BeautifulSoup(self.webpage)
-	
 
 	def scrapeImage(self):
 		tag = self.soup.find( "meta", {"property": "og:image"})

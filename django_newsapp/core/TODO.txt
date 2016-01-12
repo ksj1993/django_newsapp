@@ -1,6 +1,9 @@
 Things to do:
+- transfer to digital ocean
 - implement Postgres
-- fix Beautiful Soup
+- fix Beautiful Soup - DONE
+- stylize accounts/login, accounts/logout, accounts/signup
+- get email working
 - add profile page
 - add to discover page
 - add alternative to OG
