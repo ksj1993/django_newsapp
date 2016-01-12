@@ -12,6 +12,7 @@ class Article(models.Model):
 	site_name = models.CharField(max_length=100)
 	description = models.CharField(max_length=1000)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	pub_date = models.DateTimeField('date published')
 
 class UserProfile(models.Model):
 	user = AutoOneToOneField('auth.user')
@@ -22,7 +23,7 @@ class UserProfile(models.Model):
 	def __unicode__(self):
 		return self.user.username
 
-class ArticleCounts(models.Model):
+class ArticleCount(models.Model):
 	article = models.ForeignKey(Article)
 	count = models.IntegerField()
 

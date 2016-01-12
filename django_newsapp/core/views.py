@@ -10,12 +10,14 @@ from django.utils.html import escape
 from django.utils.html import escape
 import sys, json
 from scraper import Scraper
+from django.utils import timezone
 
 def index(request):
 	return render(request, 'core/index.html')
 
 @login_required
 def create_article(request):
+	print >> sys.stderr, "CREATING ARTICLE"
 	if request.method == 'POST':
 		
 		form = ArticleForm(request.POST)
@@ -29,6 +31,7 @@ def create_article(request):
 			new_article.title = scraper.scrapeTitle()
 			new_article.site_name = scraper.scrapeSitename()
 			new_article.description = scraper.scrapeDescr()
+			new_article.pub_date = timezone.now()
 			new_article.save()
 	
 
@@ -37,7 +40,7 @@ def create_article(request):
 				'article_image': new_article.image.url,
 				'article_title': new_article.title,
 				'article_site_name': new_article.site_name,
-				'article_user': new_article.user,
+				'article_user': new_article.user.username,
 				'article_user_id': new_article.user.id,
 				'article_description': new_article.description,
 			}
@@ -75,10 +78,11 @@ class ProfileView(View):
 
 	def get(self, request, *args, **kwargs):
 		my_profile = UserProfile.objects.get(user = request.user)
-		my_articles = Article.objects.filter(user = request.user).all()[:20]
+		my_articles = Article.objects.filter(user = request.user).all().order_by('-pub_date')[:20]
 
 		if my_articles:	
 			context = {
+				'form': ArticleForm,
 				'my_profile': my_profile,
 				'my_articles': my_articles	
 			}
@@ -93,6 +97,7 @@ class ProfileView(View):
 
 	def post(self, request, *args, **kwargs):
 		form = ArticleForm(request.POST)
+		print >> sys.stderr, "POSTING NEW ARTICLE"
 		if form.is_valid():
 			new_article = form.save(commit=False)
 			scraper = Scraper(new_article.url)
@@ -101,6 +106,7 @@ class ProfileView(View):
 			new_article.title = scraper.scrapeTitle()
 			new_article.site_name = scraper.scrapeSitename()
 			new_article.description = scraper.scrapeDescr()
+			new_article.pub_date = timezone.now()
 			new_article.save()
 
 			return HttpResponseRedirect('/profile/')
@@ -120,7 +126,7 @@ def user(request, user_id):
 	}
 
 	return render(request, 'core/user.html', context)
-	
+
 
 def discover(request):
 	# TODO top articles

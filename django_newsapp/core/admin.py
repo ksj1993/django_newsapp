@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Article, UserProfile, ArticleCounts
+from .models import Article, UserProfile, ArticleCount
 
 # Register your models here.
 admin.site.register(Article)
 admin.site.register(UserProfile)
-admin.site.register(ArticleCounts)
+admin.site.register(ArticleCount)

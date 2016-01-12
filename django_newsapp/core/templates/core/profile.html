@@ -3,7 +3,7 @@
 
 {% block head %}
   
-<script src="{% static 'markup/js/main.js' %}"></script>
+  <script src="{% static 'markup/js/main.js' %}"></script>
 
   <style type="text/css">
   body {
@@ -35,15 +35,14 @@
 <div class="ui main container">
 	<div class="ui header"> <h1> My Articles </h1> 
 
-		<form action="/profile/" method="POST" class="ui form" id="article-form">
+		<form action="create_article" method="POST" class="ui form" id="article-form">
 			{% csrf_token %} 
 			<div class="field">
 		    	<input id="url" type="text" name="url" placeholder="Post a link">
 		    </div>
-		    <input type="submit" value="Submit" class="ui submit button">
+		    <input type="submit" value="Submit" class="ui submit button" id ="article-form">
 		    
 		</form>
-
 
 
 	</div>
@@ -67,7 +66,8 @@
 		
 		    <div class="description">
 		    	{{ article.description }} <br><br>
-		    	<p> Posted by <a href="/profile/{{ article.user.id }}/"> {{ article.user }} </a></p>
+		    	Posted by <a href="/profile/{{ article.user.id }}/"> {{ article.user }} </a> <br><br>
+		    	{{ article.pub_date }} 
 
 		    </div>
 		  </div>
