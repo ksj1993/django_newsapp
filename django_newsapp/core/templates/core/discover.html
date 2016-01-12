@@ -14,9 +14,9 @@
 
 
 
-	{% if top_articles %}
+	{% if top_articles_ext %}
 	<div class="ui four cards">
-		{% for article in top_articles %}
+		{% for article in top_articles_ext %}
 		<div class="ui card">
 		  <div class="image">
 		    <img src="{{ MEDIA_URL }}{{ article.image.url }}">
@@ -32,7 +32,7 @@
 		
 		    <div class="description">
 		    	{{ article.description }} <br><br>
-		    	<p> Posted by <a href="/profile/{{ article.user.id }}/"> {{ article.user }} </a></p>
+		    	<p> Posted {{ article.count }} times</p>
 
 		    </div>
 		  </div>

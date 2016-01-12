@@ -5,10 +5,10 @@ from .forms import ArticleForm, FollowForm, ProfileForm
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
+from django.db.models import Count
 from .models import Article, UserProfile, ArticleCount
 from django.utils.html import escape
-import sys, json
+import sys, json, datetime
 from scraper import Scraper
 from django.utils import timezone
 
@@ -153,11 +153,15 @@ class DiscoverView(View):
 
 	def get(self, request, *args, **kwargs):
 
-		top_articles = Article.objects.all().order_by('-count')
-
-
+		#top_articles = ArticleCount.objects.all().order_by('-count')
+		date_from = datetime.datetime.now() - datetime.timedelta(days=1)
+		
+		top_articles = Article.objects.filter(pub_date__gte=date_from).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
+		top_articles_inc = Article.objects.filter(url__in = top_articles).distinct('url')
+		print >> sys.stderr, top_articles
+		print >> sys.stderr, top_articles_inc
 		context = {
-			'top_articles': top_articles,
+			'top_articles': top_articles_inc,
 		}
 		# TODO top users
 		
