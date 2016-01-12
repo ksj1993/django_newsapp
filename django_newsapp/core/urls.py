@@ -12,4 +12,5 @@ urlpatterns = [
 	url(r'^users/(?P<user_id>[0-9]+)/$', views.user, name='user'),
 	url(r'^delete/(?P<article_id>[0-9]+)/$', views.delete_article, name='delete'),
 	url(r'^create_article/', views.create_article),
+	url(r'^discover/', views.DiscoverView.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

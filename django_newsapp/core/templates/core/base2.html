@@ -8,6 +8,24 @@
         <script src="{% static 'semantic/dist/semantic.min.js' %}"></script>
         {% block head %}{% endblock head %}
 
+        <style type="text/css">
+        body {
+          background-color: #FFFFFF;
+        }
+        .ui.menu .item img.logo {
+          margin-right: 1.5em;
+        }
+        .main.container {
+          margin-top: 7em;
+        }
+        .wireframe {
+          margin-top: 2em;
+        }
+        .ui.footer.segment {
+          margin: 5em 0em 0em;
+          padding: 5em 0em;
+        }
+        </style>
     </head>
 
     <body>
@@ -21,7 +39,7 @@
         
             <a href="/dashboard/" class="item">My Feed</a>
             <a href="/profile/" class="item">My Links</a>
-            <a href="#" class="item">Discover</a>
+            <a href="/discover/" class="item">Discover</a>
 
           <div class="right item">
            <a href="#" class="item">Log Out</a>

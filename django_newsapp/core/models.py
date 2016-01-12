@@ -11,8 +11,8 @@ class Article(models.Model):
 	image = models.ImageField(upload_to='images', blank=True)
 	site_name = models.CharField(max_length=100)
 	description = models.CharField(max_length=1000)
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	pub_date = models.DateTimeField('date published')
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class UserProfile(models.Model):
 	user = AutoOneToOneField('auth.user')
@@ -24,8 +24,19 @@ class UserProfile(models.Model):
 		return self.user.username
 
 class ArticleCount(models.Model):
-	article = models.ForeignKey(Article)
-	count = models.IntegerField()
+	url = models.CharField(max_length=500)
+	title = models.CharField(max_length= 300)
+	image_url = models.CharField(max_length=500)
+	image = models.ImageField(upload_to='images', blank=True)
+	site_name = models.CharField(max_length=100)
+	description = models.CharField(max_length=1000)
+
+	count = models.IntegerField(default=0)
+
+
+
+
+
 
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:

@@ -1,0 +1,61 @@
+{% extends "core/base2.html" %}
+{% load staticfiles %}
+
+{% block head %}
+{% endblock head %}
+
+{% block content %}
+
+<div class="ui main container">
+
+	<div class="ui header"> <h1> Newsfeed </h1> 
+
+	</div>
+
+
+
+	{% if top_articles %}
+	<div class="ui four cards">
+		{% for article in top_articles %}
+		<div class="ui card">
+		  <div class="image">
+		    <img src="{{ MEDIA_URL }}{{ article.image.url }}">
+		  </div>
+		  <div class="content">
+		    <div class="header">
+		    	<a href="{{ article.url }}"> {{ article.title }} </a>
+		    </div>
+		   
+		    <div class="meta">
+		      <a class="group">{{ article.site_name}}</a>
+		    </div>
+		
+		    <div class="description">
+		    	{{ article.description }} <br><br>
+		    	<p> Posted by <a href="/profile/{{ article.user.id }}/"> {{ article.user }} </a></p>
+
+		    </div>
+		  </div>
+		  
+
+		  <div class="ui two bottom attached buttons">
+		    <div class="ui button">
+		      Like
+		    </div>
+		    <div class="ui button">
+		      Post
+		    </div>
+		  </div>
+
+		</div>
+		{% endfor %}
+	</div>
+	{% else %}
+
+	{% endif %}
+
+
+</div>
+
+{% endblock content %}
+

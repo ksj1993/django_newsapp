@@ -5,8 +5,8 @@ from .forms import ArticleForm, FollowForm, ProfileForm
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Article, UserProfile
-from django.utils.html import escape
+
+from .models import Article, UserProfile, ArticleCount
 from django.utils.html import escape
 import sys, json
 from scraper import Scraper
@@ -24,6 +24,7 @@ def create_article(request):
 
 		if form.is_valid():
 			
+			# Create new article
 			new_article = form.save(commit=False)
 			scraper = Scraper(new_article.url)
 			new_article.user = request.user
@@ -33,7 +34,22 @@ def create_article(request):
 			new_article.description = scraper.scrapeDescr()
 			new_article.pub_date = timezone.now()
 			new_article.save()
-	
+
+			# Update article count
+
+			article_count, created = ArticleCount.objects.get_or_create(url=new_article.url)
+			if created:
+				article_count.title = new_article.title
+				article_count.image_url = new_article.image_url
+				article_count.image = new_article.image
+				article_count.site_name = new_article.site_name
+				article_count.description = new_article.description
+				article_count.count = 1
+			else:
+				article_count.count += 1
+
+			article_count.save()
+
 
 			response_data = {
 				'article_url': new_article.url,
@@ -78,7 +94,7 @@ class ProfileView(View):
 
 	def get(self, request, *args, **kwargs):
 		my_profile = UserProfile.objects.get(user = request.user)
-		my_articles = Article.objects.filter(user = request.user).all().order_by('-pub_date')[:20]
+		my_articles = Article.objects.filter(user = request.user).all().order_by('-pub_date')
 
 		if my_articles:	
 			context = {
@@ -118,7 +134,7 @@ class ProfileView(View):
 def user(request, user_id):
 
 	user_profile = User.objects.get(id = user_id)
-	user_articles = Article.objects.filter(user = user_profile).all()[:20]
+	user_articles = Article.objects.filter(user = user_profile).all()
 
 	context = {
 		'user_profile': user_profile,
@@ -128,10 +144,25 @@ def user(request, user_id):
 	return render(request, 'core/user.html', context)
 
 
-def discover(request):
-	# TODO top articles
-	# TODO top users
-	pass
+class DiscoverView(View):
+	template_name = 'core/discover.html'
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super(DiscoverView, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+
+		top_articles = Article.objects.all().order_by('-count')
+
+
+		context = {
+			'top_articles': top_articles,
+		}
+		# TODO top users
+		
+		return render(request, self.template_name, context)
+
 
 @login_required
 def follow(request):

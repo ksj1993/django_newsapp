@@ -5,35 +5,17 @@
   
   <script src="{% static 'markup/js/main.js' %}"></script>
 
-  <style type="text/css">
-  body {
-    background-color: #FFFFFF;
-  }
-  .ui.menu .item img.logo {
-    margin-right: 1.5em;
-  }
-  .main.container {
-    margin-top: 7em;
-  }
-  .wireframe {
-    margin-top: 2em;
-  }
-  .ui.footer.segment {
-    margin: 5em 0em 0em;
-    padding: 5em 0em;
-  }
-  </style>
-
-
 
 {% endblock head %}
 
 {% block content %}
 
 
-
 <div class="ui main container">
+	<p> TEST </p> <div id="test"> </div>
 	<div class="ui header"> <h1> My Articles </h1> 
+	
+
 
 		<form action="create_article" method="POST" class="ui form" id="article-form">
 			{% csrf_token %} 
@@ -46,6 +28,8 @@
 
 
 	</div>
+
+	<div class="ui four cards"></div> <!-- new articles go here -->
 
 
 	{% if my_articles %}
