@@ -1,9 +1,6 @@
 *.pyc
 django_newsapp/django_newsapp/settings.py
-
-django_newsapp/core/static/
-
-django_newsapp/static_media/*
 django_newsapp/media/*
+django_newsapp/static_media/*
 db.*
 .DS_Store
