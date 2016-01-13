@@ -3,11 +3,13 @@ from cookielib import CookieJar
 from bs4 import BeautifulSoup
 from django.conf import settings as djangoSettings
 from .models import Article
+from urlparse import urlparse
 
 class Scraper:
 
 	def __init__(self, url_page):
 		try:
+			self.url_page = url_page
 			cj = CookieJar()
 			opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 			self.webpage = opener.open(url_page)
@@ -65,8 +67,11 @@ class Scraper:
 		if tag is not None:
 			return tag['content']
 		else:
-			# TODO 
-			return ""
+			try:
+				cleaner = urlparse(self.url_page)
+				return cleaner.netloc
+			except:
+				return ""
 
 	def scrapeDescr(self):
 		tag = self.soup.find("meta", {"property": "og:description"})

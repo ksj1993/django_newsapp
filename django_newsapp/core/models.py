@@ -34,10 +34,6 @@ class ArticleCount(models.Model):
 	count = models.IntegerField(default=0)
 
 
-
-
-
-
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		UserProfile.objects.create(user=instance)

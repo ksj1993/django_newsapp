@@ -11,8 +11,9 @@ from django.utils.html import escape
 import sys, json, datetime
 from scraper import Scraper
 from django.utils import timezone
+import datetime
 from urlparse import urlparse
-
+import helper
 
 def index(request):
 	return render(request, 'core/index.html')
@@ -58,6 +59,10 @@ def create_article(request):
 
 			article_count.save()
 
+			# adjust date
+			splitter = str(new_article.pub_date).split(":")
+			article_date = splitter[0] + ":" + splitter[1]
+			article_date = datetime.datetime.strptime(article_date, '%Y-%m-%d %H:%M').strftime('%b %d, %Y, %I:%M %p')
 
 			response_data = {
 				'article_url': new_article.url,
@@ -67,7 +72,7 @@ def create_article(request):
 				'article_user': new_article.user.username,
 				'article_user_id': new_article.user.id,
 				'article_description': new_article.description,
-				'article_pub_date': str( new_article.pub_date),
+				'article_pub_date': article_date,
 			}
 
 			# Success
