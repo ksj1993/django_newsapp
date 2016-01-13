@@ -25,61 +25,66 @@ def create_article(request):
 		form = ArticleForm(request.POST)
 
 		if form.is_valid():
-			
-			# Create new article
-			new_article = form.save(commit=False)
+			try:
+				# Create new article
+				new_article = form.save(commit=False)
 
-			cleaner = urlparse(new_article.url)
-			cleaned_url = "http://" + cleaner.netloc + cleaner.path
-			print >> sys.stderr, "CLEANED URL: " + cleaned_url
-			new_article.url = cleaned_url
-
-
-			scraper = Scraper(new_article.url)
-			new_article.user = request.user
-			new_article.image, new_article.image_url = scraper.scrapeImage()
-			new_article.title = scraper.scrapeTitle()
-			new_article.site_name = scraper.scrapeSitename()
-			new_article.description = scraper.scrapeDescr()
-			new_article.pub_date = timezone.now()
-			new_article.save()
-
-			# Update article count
-
-			article_count, created = ArticleCount.objects.get_or_create(url=new_article.url)
-			if created:
-				article_count.title = new_article.title
-				article_count.image_url = new_article.image_url
-				article_count.image = new_article.image
-				article_count.site_name = new_article.site_name
-				article_count.description = new_article.description
-				article_count.count = 1
-			else:
-				article_count.count += 1
-
-			article_count.save()
+				cleaner = urlparse(new_article.url)
+				cleaned_url = "http://" + cleaner.netloc + cleaner.path			
+				new_article.url = cleaned_url
 
 
-			response_data = {
-				'article_url': new_article.url,
-				'article_image': new_article.image.url,
-				'article_title': new_article.title,
-				'article_site_name': new_article.site_name,
-				'article_user': new_article.user.username,
-				'article_user_id': new_article.user.id,
-				'article_description': new_article.description,
-			}
+				scraper = Scraper(new_article.url)
+				new_article.user = request.user
+				new_article.image, new_article.image_url = scraper.scrapeImage()
+				new_article.title = scraper.scrapeTitle()
+				new_article.site_name = scraper.scrapeSitename()
+				new_article.description = scraper.scrapeDescr()
+				new_article.pub_date = timezone.now()
+				new_article.save()
 
-			return HttpResponse(
-				json.dumps(response_data),
-				content_type="application/json"
-			)
+				# Update article count
+
+				article_count, created = ArticleCount.objects.get_or_create(url=new_article.url)
+				if created:
+					article_count.title = new_article.title
+					article_count.image_url = new_article.image_url
+					article_count.image = new_article.image
+					article_count.site_name = new_article.site_name
+					article_count.description = new_article.description
+					article_count.count = 1
+				else:
+					article_count.count += 1
+
+				article_count.save()
+
+
+				response_data = {
+					'article_url': new_article.url,
+					'article_image': new_article.image.url,
+					'article_title': new_article.title,
+					'article_site_name': new_article.site_name,
+					'article_user': new_article.user.username,
+					'article_user_id': new_article.user.id,
+					'article_description': new_article.description,
+				}
+
+				return HttpResponse(
+					json.dumps(response_data),
+					content_type="application/json"
+				)
+			except:
+				# Return error message
+				return HttpResponse(
+					json.dumps({"Error": "error"}),
+					content_type="application/json"
+				) 
 		else:
 			# TODO errors
 			return HttpResponse(
-			json.dumps({"Error": "error"}),
-			content_type="application/json"
-		)
+				json.dumps({"Error": "error"}),
+				content_type="application/json"
+			)
 	else:
 		# TODO errors
 		return HttpResponse(
@@ -162,17 +167,12 @@ class DiscoverView(View):
 
 	def get(self, request, *args, **kwargs):
 
-		#top_articles = ArticleCount.objects.all().order_by('-count')
 		date_from = datetime.datetime.now() - datetime.timedelta(days=1)
-		
-		### Wait for Postgres install
-		###
+				
 		top_articles = Article.objects.filter(pub_date__gte=date_from).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
 		top_articles_inc = Article.objects.filter(url__in = top_articles).distinct('url')
 
-		###
-		###
-		print >> sys.stderr, top_articles
+		
 		print >> sys.stderr, top_articles_inc
 		context = {
 			'top_articles': top_articles_inc,

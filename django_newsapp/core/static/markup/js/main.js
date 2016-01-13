@@ -22,9 +22,18 @@ $(function() {
 	        success : function(json) {
 			    $('#url').val(''); // remove the value from the input
 			    console.log(json); // log the returned json to the console
-			    $('#test').append("test");
-			  	$('#test').html("test");
-			    $('#test').prepend("test");
+
+                /*
+			    $('#add-card').append("
+                    <div class='ui card'>
+                        <div class='content'>
+                            <div class='description'>
+                                Test Test test
+                            </div>
+                        </div>
+                    </div>
+                ");
+                */
 
 			    console.log("success"); // another sanity check
 			},

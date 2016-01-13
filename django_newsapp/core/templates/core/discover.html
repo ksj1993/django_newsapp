@@ -2,21 +2,22 @@
 {% load staticfiles %}
 
 {% block head %}
+  
+  <script src="{% static 'markup/js/main.js' %}"></script>
+
+
 {% endblock head %}
 
 {% block content %}
 
+
 <div class="ui main container">
-
-	<div class="ui header"> <h1> Newsfeed </h1> 
-
+	<div class="ui header"> <h1> Top Articles </h1> 
 	</div>
 
-
-
-	{% if top_articles_ext %}
+	{% if top_articles %}
 	<div class="ui four cards">
-		{% for article in top_articles_ext %}
+		{% for article in top_articles %}
 		<div class="ui card">
 		  <div class="image">
 		    <img src="{{ MEDIA_URL }}{{ article.image.url }}">
@@ -32,8 +33,7 @@
 		
 		    <div class="description">
 		    	{{ article.description }} <br><br>
-		    	<p> Posted {{ article.count }} times</p>
-
+		    	Posted by {{  }} times
 		    </div>
 		  </div>
 		  
@@ -42,20 +42,23 @@
 		    <div class="ui button">
 		      Like
 		    </div>
-		    <div class="ui button">
-		      Post
+		    <div class="ui button" href="/create_post/">
+		      Share
 		    </div>
 		  </div>
 
 		</div>
 		{% endfor %}
 	</div>
+
 	{% else %}
 
+	<!-- ADD DISCOVER LOGIC -->
+
 	{% endif %}
+
 
 
 </div>
 
 {% endblock content %}
-

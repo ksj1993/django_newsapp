@@ -12,10 +12,8 @@
 
 
 <div class="ui main container">
-	<p> TEST </p> <div id="test"> </div>
 	<div class="ui header"> <h1> My Articles </h1> 
 	
-
 
 		<form action="create_article" method="POST" class="ui form" id="article-form">
 			{% csrf_token %} 
@@ -29,7 +27,10 @@
 
 	</div>
 
-	<div class="ui four cards"></div> <!-- new articles go here -->
+	<div class="ui four cards" id="add-card">
+		<div id="add-card">
+		</div>
+	</div> 
 
 
 	{% if my_articles %}
