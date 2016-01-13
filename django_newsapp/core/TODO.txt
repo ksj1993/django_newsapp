@@ -1,6 +1,6 @@
 Things to do:
-- transfer to digital ocean
-- implement Postgres
+- transfer to digital ocean DONE
+- implement Postgres DONE
 - fix Beautiful Soup - DONE
 - stylize accounts/login, accounts/logout, accounts/signup
 - get email working
@@ -10,3 +10,4 @@ Things to do:
 - like articles
 - most recommended / most posted
 - Front page
+- Setup gunicorn.conf UPSTART service.... for some reason this isn't working...
