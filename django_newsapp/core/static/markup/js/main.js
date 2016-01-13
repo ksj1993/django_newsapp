@@ -23,17 +23,36 @@ $(function() {
 			    $('#url').val(''); // remove the value from the input
 			    console.log(json); // log the returned json to the console
 
-                /*
-			    $('#add-card').append("
-                    <div class='ui card'>
-                        <div class='content'>
-                            <div class='description'>
-                                Test Test test
-                            </div>
-                        </div>
-                    </div>
-                ");
-                */
+               
+			    $('#add-card').prepend(
+                    "  <div class='ui card'>"+
+                    "    <div class='image'>"+
+                    "      <img src='"+ json.article_image +"'>"+
+                    "    </div>"+
+                    "    <div class='content'>" +
+                    "      <div class='header'>"+
+                    "        <a href='"+ json.article_url+"'> "+ json.article_title+" </a>"+
+                    "      </div>"+
+                    "      <div class='meta'>"+
+                    "        <a class='group'>"+ json.article_site_name+"</a>"+
+                    "      </div>"+
+                    "      <div class='description'>"+
+                    "        "+ json.article_description +" <br><br>"+
+                    "        Posted by <a href='/profile/"+ json.article_user_id+"/'> "+ json.article_user+" </a> <br><br>"+
+                    "        "+ json.article_pub_date+
+                    "      </div>"+
+                    "    </div>"+
+                    "    <div class='ui two bottom attached buttons'>"+
+                    "      <div class='ui button'>"+
+                    "        Like"+
+                    "      </div>"+
+                    "      <div class='ui button'>"+
+                    "        Delete"+
+                    "      </div>"+
+                    "    </div>"+
+                    "  </div>"
+                );
+           
 
 			    console.log("success"); // another sanity check
 			},

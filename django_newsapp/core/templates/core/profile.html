@@ -27,14 +27,10 @@
 
 	</div>
 
+
 	<div class="ui four cards" id="add-card">
-		<div id="add-card">
-		</div>
-	</div> 
-
-
-	{% if my_articles %}
-	<div class="ui four cards">
+		
+		{% if my_articles %}
 		{% for article in my_articles %}
 		<div class="ui card">
 		  <div class="image">
@@ -62,20 +58,20 @@
 		    <div class="ui button">
 		      Like
 		    </div>
-		    <div class="ui button" action="/delete/{{ article.id }}">
+		    <div class="ui button">
 		      Delete
 		    </div>
 		  </div>
 
 		</div>
 		{% endfor %}
+		{% else %}
+		{% endif %}
 	</div>
 
-	{% else %}
 
-	<!-- ADD DISCOVER LOGIC -->
 
-	{% endif %}
+	
 
 
 

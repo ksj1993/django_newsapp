@@ -14,7 +14,7 @@ class Scraper:
 			self.soup = BeautifulSoup(self.webpage)
 		except:
 			raise
-			
+
 	def scrapeImage(self):
 		tag = self.soup.find( "meta", {"property": "og:image"})
 		if tag is not None:
@@ -66,7 +66,7 @@ class Scraper:
 			return tag['content']
 		else:
 			# TODO 
-			return 
+			return ""
 
 	def scrapeDescr(self):
 		tag = self.soup.find("meta", {"property": "og:description"})

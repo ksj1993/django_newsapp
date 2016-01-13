@@ -25,60 +25,57 @@ def create_article(request):
 		form = ArticleForm(request.POST)
 
 		if form.is_valid():
-			try:
-				# Create new article
-				new_article = form.save(commit=False)
+			
+			# Create new article
+			new_article = form.save(commit=False)
 
-				cleaner = urlparse(new_article.url)
-				cleaned_url = "http://" + cleaner.netloc + cleaner.path			
-				new_article.url = cleaned_url
+			cleaner = urlparse(new_article.url)
+			cleaned_url = "http://" + cleaner.netloc + cleaner.path			
+			new_article.url = cleaned_url
+
+			# scape info from URL
+			scraper = Scraper(new_article.url)
+			new_article.user = request.user
+			new_article.image, new_article.image_url = scraper.scrapeImage()
+			new_article.title = scraper.scrapeTitle()
+			new_article.site_name = scraper.scrapeSitename()
+			new_article.description = scraper.scrapeDescr()
+			new_article.pub_date = timezone.now()
+			new_article.save()
+
+			# Update article count
+
+			article_count, created = ArticleCount.objects.get_or_create(url=new_article.url)
+			if created:
+				article_count.title = new_article.title
+				article_count.image_url = new_article.image_url
+				article_count.image = new_article.image
+				article_count.site_name = new_article.site_name
+				article_count.description = new_article.description
+				article_count.count = 1
+			else:
+				article_count.count += 1
+
+			article_count.save()
 
 
-				scraper = Scraper(new_article.url)
-				new_article.user = request.user
-				new_article.image, new_article.image_url = scraper.scrapeImage()
-				new_article.title = scraper.scrapeTitle()
-				new_article.site_name = scraper.scrapeSitename()
-				new_article.description = scraper.scrapeDescr()
-				new_article.pub_date = timezone.now()
-				new_article.save()
+			response_data = {
+				'article_url': new_article.url,
+				'article_image': new_article.image.url,
+				'article_title': new_article.title,
+				'article_site_name': new_article.site_name,
+				'article_user': new_article.user.username,
+				'article_user_id': new_article.user.id,
+				'article_description': new_article.description,
+				'article_pub_date': str( new_article.pub_date),
+			}
 
-				# Update article count
-
-				article_count, created = ArticleCount.objects.get_or_create(url=new_article.url)
-				if created:
-					article_count.title = new_article.title
-					article_count.image_url = new_article.image_url
-					article_count.image = new_article.image
-					article_count.site_name = new_article.site_name
-					article_count.description = new_article.description
-					article_count.count = 1
-				else:
-					article_count.count += 1
-
-				article_count.save()
-
-
-				response_data = {
-					'article_url': new_article.url,
-					'article_image': new_article.image.url,
-					'article_title': new_article.title,
-					'article_site_name': new_article.site_name,
-					'article_user': new_article.user.username,
-					'article_user_id': new_article.user.id,
-					'article_description': new_article.description,
-				}
-
-				return HttpResponse(
-					json.dumps(response_data),
-					content_type="application/json"
-				)
-			except:
-				# Return error message
-				return HttpResponse(
-					json.dumps({"Error": "error"}),
-					content_type="application/json"
-				) 
+			# Success
+			return HttpResponse(
+				json.dumps(response_data),
+				content_type="application/json"
+			)
+			
 		else:
 			# TODO errors
 			return HttpResponse(
