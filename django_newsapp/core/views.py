@@ -20,77 +20,98 @@ def index(request):
 
 @login_required
 def create_article(request):
-	print >> sys.stderr, "CREATING ARTICLE"
+	
 	if request.method == 'POST':
 		
 		form = ArticleForm(request.POST)
 
 		if form.is_valid():
 			
-			# Create new article
-			new_article = form.save(commit=False)
+			try:
+			# Check if user has already posted this article
+				if not Article.objects.filter(user = request.user, url = form.cleaned_data['url']):
+				
+					print >> sys.stderr, "CREATING NEW ARTICLE"
+					# Else create new article
+					new_article = form.save(commit=False)
 
-			cleaner = urlparse(new_article.url)
-			cleaned_url = "http://" + cleaner.netloc + cleaner.path			
-			new_article.url = cleaned_url
+					cleaner = urlparse(new_article.url)
+					cleaned_url = "http://" + cleaner.netloc + cleaner.path			
+					new_article.url = cleaned_url
 
-			# scape info from URL
-			scraper = Scraper(new_article.url)
-			new_article.user = request.user
-			new_article.image, new_article.image_url = scraper.scrapeImage()
-			new_article.title = scraper.scrapeTitle()
-			new_article.site_name = scraper.scrapeSitename()
-			new_article.description = scraper.scrapeDescr()
-			new_article.pub_date = timezone.now()
-			new_article.save()
+					# scape info from URL
+					scraper = Scraper(new_article.url)
+					new_article.user = request.user
+					new_article.image, new_article.image_url = scraper.scrapeImage()
+					new_article.title = scraper.scrapeTitle()
+					new_article.site_name = scraper.scrapeSitename()
+					new_article.description = scraper.scrapeDescr()
+					new_article.pub_date = timezone.now()
+					new_article.save()
 
-			# Update article count
+					# Update article count
 
-			article_count, created = ArticleCount.objects.get_or_create(url=new_article.url)
-			if created:
-				article_count.title = new_article.title
-				article_count.image_url = new_article.image_url
-				article_count.image = new_article.image
-				article_count.site_name = new_article.site_name
-				article_count.description = new_article.description
-				article_count.count = 1
-			else:
-				article_count.count += 1
+					article_count, created = ArticleCount.objects.get_or_create(url=new_article.url)
+					if created:
+						article_count.title = new_article.title
+						article_count.image_url = new_article.image_url
+						article_count.image = new_article.image
+						article_count.site_name = new_article.site_name
+						article_count.description = new_article.description
+						article_count.count = 1
+					else:
+						article_count.count += 1
 
-			article_count.save()
+					article_count.save()
 
-			# adjust date
-			splitter = str(new_article.pub_date).split(":")
-			article_date = splitter[0] + ":" + splitter[1]
-			article_date = datetime.datetime.strptime(article_date, '%Y-%m-%d %H:%M').strftime('%b %d, %Y, %I:%M %p')
+					# adjust date
+					splitter = str(new_article.pub_date).split(":")
+					article_date = splitter[0] + ":" + splitter[1]
+					article_date = datetime.datetime.strptime(article_date, '%Y-%m-%d %H:%M').strftime('%b %d, %Y, %I:%M %p')
 
-			response_data = {
-				'article_url': new_article.url,
-				'article_image': new_article.image.url,
-				'article_title': new_article.title,
-				'article_site_name': new_article.site_name,
-				'article_user': new_article.user.username,
-				'article_user_id': new_article.user.id,
-				'article_description': new_article.description,
-				'article_pub_date': article_date,
-			}
+					response_data = {
+						'article_url': new_article.url,
+						'article_image': new_article.image.url,
+						'article_title': new_article.title,
+						'article_site_name': new_article.site_name,
+						'article_user': new_article.user.username,
+						'article_user_id': new_article.user.id,
+						'article_description': new_article.description,
+						'article_pub_date': article_date,
+					}
 
-			# Success
+					# Success
+					return HttpResponse(
+						json.dumps(response_data),
+						content_type="application/json"
+					)
+
+				response_data = {'Error': 'You have already posted this article'}
+				return HttpResponse(
+					json.dumps(response_data),
+					content_type="application/json"
+				)
+			
+			except:
+				print >> sys.stderr, "ERROR IN SCRAPER"
+				response_data = {'Error': 'Error posting link. Please try again'}
+				return HttpResponse(
+					json.dumps(response_data),
+					content_type="application/json"
+				)
+			
+		else:
+			print >> sys.stderr, "FORM IS NOT VALID"
+			response_data = {'Error': 'Error posting link. Please try again'}
 			return HttpResponse(
 				json.dumps(response_data),
 				content_type="application/json"
 			)
-			
-		else:
-			# TODO errors
-			return HttpResponse(
-				json.dumps({"Error": "error"}),
-				content_type="application/json"
-			)
 	else:
-		# TODO errors
+		print >> sys.stderr, "NOT POST REQUEST"
+		response_data = {'Error': 'Error posting link. Please try again'}
 		return HttpResponse(
-			json.dumps({"Error": "error"}),
+			json.dumps(response_data),
 			content_type="application/json"
 		)
 

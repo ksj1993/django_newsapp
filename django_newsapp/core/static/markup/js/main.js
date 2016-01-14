@@ -3,28 +3,32 @@ $(function() {
 
 	$('#article-form').on('submit', function(event){
 	    event.preventDefault();
-	    $('test').html("test");
 	    console.log("form submitted!")  // sanity check
 	    create_article();
 	});
 
-	
-
 		// AJAX for posting
 	function create_article() {
-	    console.log("create article is working!") // sanity check
+	    console.log("create article is working!") 
 	    $.ajax({
-	        url : "/create_article/", // the endpoint
-	        type : "POST", // http method
-	        data : { url : $('#url').val() }, // data sent with the post request
+	        url : "/create_article/", 
+	        type : "POST", 
+	        data : { url : $('#url').val() }, 
 
 	        // handle a successful response
 	        success : function(json) {
-			    $('#url').val(''); // remove the value from the input
-			    console.log(json); // log the returned json to the console
+			    $('#url').val(''); 
+			    console.log(json); 
 
-               
-			    $('#add-card').prepend(
+                if(json.hasOwnProperty('Error')){
+                    console.log("Error!")
+                    $('#error').html(json.Error);
+                }
+
+			    else {
+                    $('#error').html('Success! Your link has been posted!');
+
+                    $('#add-card').prepend(
                     "  <div class='ui card'>"+
                     "    <div class='image'>"+
                     "      <img src='"+ json.article_image +"'>"+
@@ -52,16 +56,16 @@ $(function() {
                     "    </div>"+
                     "  </div>"
                 );
-           
-
-			    console.log("success"); // another sanity check
+                }
+        
+			    console.log("success");
 			},
 
-	        // handle a non-successful response
+	
 	        error : function(xhr,errmsg,err) {
 	            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-	                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-	            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+	                " <a href='#' class='close'>&times;</a></div>"); 
+	            console.log(xhr.status + ": " + xhr.responseText); 
 	        }
 	    });
 	};
