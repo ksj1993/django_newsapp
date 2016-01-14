@@ -1,15 +1,18 @@
-Things to do:
+TODO:
 - transfer to digital ocean DONE
 - Nginx / Gunicorn implement DONE
 - implement Postgres DONE
-- fix Beautiful Soup - DONE
-- Ajax add card
-- stylize accounts/login, accounts/logout, accounts/signup
+- fix Beautiful Soup DONE
+- Ajax add card DONE
+- stylize accounts/login, accounts/logout, accounts/signup DONE
+- error handling for invalud urls DONE - needs more testing
 - get email working
 - add profile page
 - add to discover page
-- add alternative to OG
+- add alternative to OG PARTIAL
 - like articles
 - most recommended / most posted
 - Front page
 - Setup gunicorn.conf UPSTART service. DONE
+- delete article
+- website name
