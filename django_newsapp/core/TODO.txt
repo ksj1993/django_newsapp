@@ -1,5 +1,6 @@
 TODO:
 - add user/profile page
+- add account page
 - add functionality to follow (check if follows list)
 - add users to discover page 
 - add "see more" to discover page

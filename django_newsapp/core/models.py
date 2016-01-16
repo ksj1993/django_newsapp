@@ -18,8 +18,8 @@ class Article(models.Model):
 class UserProfile(models.Model):
 	user = AutoOneToOneField('auth.user')
 	follows = models.ManyToManyField('UserProfile', related_name='followed_by')
-	description = models.CharField(max_length=300)
-	occupation = models.CharField(max_length= 100)
+	description = models.CharField(max_length=300, default='')
+	occupation = models.CharField(max_length= 100, default='')
 
 	def __unicode__(self):
 		return self.user.username

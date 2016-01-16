@@ -142,16 +142,15 @@ def follow(request, username):
 	new_followee = User.objects.filter(username = username).first()
 	if not new_followee:
 		raise Http404("Cannot follow user")
-	'''try:
-	if not UserProfile.objects.get(user = request.user).follows.values().get(new_followee.userprofile):
-		UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
-		return HttpResponse("Success")
-	else:
-		return HttpResponse("Already following that user")
-
+	try:
+		if not UserProfile.objects.get(user = request.user).follows.values().get(id = new_followee.userprofile.id):
+			UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
+			return HttpResponse("Success")
+		else:
+			return HttpResponse("Already following that user")
 	except:
 		return HttpResponse("Error, could not add follower")
-	'''
+	
 
 class ProfileView(View):
 	template_name = 'core/profile.html'
@@ -239,23 +238,6 @@ class DiscoverView(View):
 		return render(request, self.template_name, context)
 
 
-
-'''
-@login_required
-def follow(request):
-	if request.method == 'POST':
-		form = FollowForm(request.POST)
-		if form.is_valid():
-			new_followee = form.cleaned_data['followee']
-			new_followee = User.objects.get(username = new_followee)
-			if new_followee is not None:
-				UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
-				return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-			return HttpResponse("error")
-		else:
-			#TODO errors
-			pass
-'''
 
 class DashboardView(View):
 	template_name = 'core/dashboard.html'
