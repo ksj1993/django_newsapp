@@ -2,5 +2,10 @@
 django_newsapp/django_newsapp/settings.py
 django_newsapp/media/*
 django_newsapp/static_media/*
+django_newsapp/core/static/node_modules/*
+django_newsapp/core/static/semantic/*
+django_newsapp/core/static/semantic.json
+
+
 db.*
 .DS_Store

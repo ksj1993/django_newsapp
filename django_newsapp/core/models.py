@@ -11,7 +11,8 @@ class Article(models.Model):
 	image = models.ImageField(upload_to='images', blank=True)
 	site_name = models.CharField(max_length=100)
 	description = models.CharField(max_length=1000)
-	pub_date = models.DateTimeField('date published')
+	real_pub_date = models.DateTimeField('real pub date')
+	pub_date = models.DateField('date published')
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class UserProfile(models.Model):

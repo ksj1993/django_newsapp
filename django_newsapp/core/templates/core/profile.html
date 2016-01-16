@@ -27,12 +27,11 @@
 
 	</div>
 
-
-	<div class="ui four cards" id="add-card">
+	{% if my_articles %}
+	<div class="ui stackable four cards" id="add-card">
 		
-		{% if my_articles %}
 		{% for article in my_articles %}
-		<div class="ui card">
+		<div class="ui card" id="{{ article.id }}">
 		  <div class="image">
 		    <img src="{{ MEDIA_URL }}{{ article.image.url }}">
 		  </div>
@@ -58,23 +57,40 @@
 		    <div class="ui button">
 		      Like
 		    </div>
-		    <div class="ui button">
+		    <div class="ui button delete-button">
 		      Delete
 		    </div>
 		  </div>
 
 		</div>
+
+
 		{% endfor %}
-		{% else %}
-		{% endif %}
+
+	</div>
+	<br>
+	<div class="ui right aligned grid">
+		<div class="left floated right aligned four wide column">
+	        {% if my_articles.has_previous %}
+	            <a href="?page={{ my_articles.previous_page_number }}">previous</a>
+	        {% endif %}
+		</div>
+		<div class="center floated center aligned four wide column">
+		    Page {{ my_articles.number }} of {{ my_articles.paginator.num_pages }}.
+		</div>		  
+		<div class="right floated left aligned four wide column">
+	        {% if my_articles.has_next %}
+	            <a href="?page={{ my_articles.next_page_number }}">next</a>
+	        {% endif %}
+		</div>
 	</div>
 
+	{% else %}
+	{% endif %}
 
 
-	
-
-
-
+	<br>
+	<br>
 </div>
 
 {% endblock content %}

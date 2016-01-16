@@ -1,11 +1,46 @@
 
 $(function() {
+    
+    $(".delete-button").click(function () {
+        var id = $(this).parent().closest('div[id]').attr('id');
+        console.log(id);
+        delete_article(id)
+    });
 
 	$('#article-form').on('submit', function(event){
 	    event.preventDefault();
 	    console.log("form submitted!")  // sanity check
 	    create_article();
 	});
+
+    function delete_article(id) {
+        console.log("delete article is working!");
+        $.ajax({
+            url : "/delete/".concat(id), 
+            type : "GET", 
+
+            // handle a successful response
+            success : function(json) {
+                console.log(json); 
+
+                if(json.hasOwnProperty('Error')){
+                    console.log("Error!")
+                    $('#error').html(json.Error);
+                } else {
+                    var element = document.getElementById(id);
+                    element.parentNode.removeChild(element);
+                }
+        
+            },
+
+    
+            error : function(xhr,errmsg,err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                    " <a href='#' class='close'>&times;</a></div>"); 
+                console.log(xhr.status + ": " + xhr.responseText); 
+            }
+        });
+    };
 
 		// AJAX for posting
 	function create_article() {
@@ -21,11 +56,12 @@ $(function() {
 			    console.log(json); 
 
                 if(json.hasOwnProperty('Error')){
-                    console.log("Error!")
+                    console.log("Error!");
                     $('#error').html(json.Error);
                 }
 
 			    else {
+                    console.log("Sucess!");
                     $('#error').html('Success! Your link has been posted!');
 
                     $('#add-card').prepend(
@@ -58,7 +94,6 @@ $(function() {
                 );
                 }
         
-			    console.log("success");
 			},
 
 	

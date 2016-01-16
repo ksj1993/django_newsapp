@@ -1,16 +1,18 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.generic import View
 from .forms import ArticleForm, FollowForm, ProfileForm
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Count
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Article, UserProfile, ArticleCount
 from django.utils.html import escape
 import sys, json, datetime
 from scraper import Scraper
 from django.utils import timezone
+from datetime import date
 import datetime
 from urlparse import urlparse
 import helper
@@ -28,7 +30,7 @@ def create_article(request):
 		if form.is_valid():
 			
 			try:
-			# Check if user has already posted this article
+				# Check if user has already posted this article
 				if not Article.objects.filter(user = request.user, url = form.cleaned_data['url']):
 				
 					print >> sys.stderr, "CREATING NEW ARTICLE"
@@ -46,7 +48,8 @@ def create_article(request):
 					new_article.title = scraper.scrapeTitle()
 					new_article.site_name = scraper.scrapeSitename()
 					new_article.description = scraper.scrapeDescr()
-					new_article.pub_date = timezone.now()
+					new_article.pub_date = date.today()
+					new_article.real_pub_date = timezone.now()
 					new_article.save()
 
 					# Update article count
@@ -65,9 +68,7 @@ def create_article(request):
 					article_count.save()
 
 					# adjust date
-					splitter = str(new_article.pub_date).split(":")
-					article_date = splitter[0] + ":" + splitter[1]
-					article_date = datetime.datetime.strptime(article_date, '%Y-%m-%d %H:%M').strftime('%b %d, %Y, %I:%M %p')
+					article_date = datetime.datetime.strptime(str(new_article.pub_date), '%Y-%m-%d').strftime('%b %d, %Y')
 
 					response_data = {
 						'article_url': new_article.url,
@@ -99,7 +100,6 @@ def create_article(request):
 					json.dumps(response_data),
 					content_type="application/json"
 				)
-			
 		else:
 			print >> sys.stderr, "FORM IS NOT VALID"
 			response_data = {'Error': 'Error posting link. Please try again'}
@@ -118,9 +118,40 @@ def create_article(request):
 
 @login_required
 def delete_article(request, article_id):
-	if request.method == 'POST':
-		Article.objects.get(id = article_id).delete()
-		return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+	article = Article.objects.filter(id=article_id).first()
+	if not article or article.user != request.user:
+		raise Http404("Cannot delete article")
+
+	try:
+		Article.objects.get(id = article_id, user=request.user).delete()
+		response_data = {'Success': 'Article deleted'}
+		return HttpResponse(
+			json.dumps(response_data),
+			content_type="application/json"
+		)
+	except:
+		response_data = {'Error': 'Could not delete article. Please try again later'}
+		return HttpResponse(
+			json.dumps(response_data),
+			content_type="application/json"
+		)
+
+@login_required
+def follow(request, username):
+	print >> sys.stderr, username
+	new_followee = User.objects.filter(username = username).first()
+	if not new_followee:
+		raise Http404("Cannot follow user")
+	'''try:
+	if not UserProfile.objects.get(user = request.user).follows.values().get(new_followee.userprofile):
+		UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
+		return HttpResponse("Success")
+	else:
+		return HttpResponse("Already following that user")
+
+	except:
+		return HttpResponse("Error, could not add follower")
+	'''
 
 class ProfileView(View):
 	template_name = 'core/profile.html'
@@ -130,14 +161,27 @@ class ProfileView(View):
 		return super(ProfileView, self).dispatch(*args, **kwargs)
 
 	def get(self, request, *args, **kwargs):
+		
+
 		my_profile = UserProfile.objects.get(user = request.user)
-		my_articles = Article.objects.filter(user = request.user).all().order_by('-pub_date')
+		my_articles = Article.objects.filter(user = request.user).all().order_by('-real_pub_date')
+
 
 		if my_articles:	
+
+			paginator = Paginator(my_articles, 20)
+			page = request.GET.get('page')
+
+			try: 
+				articles = paginator.page(page)
+			except PageNotAnInteger:
+				articles = paginator.page(1)
+			except EmptyPage:
+				articles = paginator.page(paginator.num_pages)
 			context = {
 				'form': ArticleForm,
 				'my_profile': my_profile,
-				'my_articles': my_articles	
+				'my_articles': articles	
 			}
 			return render(request, self.template_name, context)
 		else:
@@ -149,21 +193,8 @@ class ProfileView(View):
 			return render(request, self.template_name, context)
 
 	def post(self, request, *args, **kwargs):
-		form = ArticleForm(request.POST)
-		print >> sys.stderr, "POSTING NEW ARTICLE"
-		if form.is_valid():
-			new_article = form.save(commit=False)
-			scraper = Scraper(new_article.url)
-			new_article.user = request.user
-			new_article.image, new_article.image_url = scraper.scrapeImage()
-			new_article.title = scraper.scrapeTitle()
-			new_article.site_name = scraper.scrapeSitename()
-			new_article.description = scraper.scrapeDescr()
-			new_article.pub_date = timezone.now()
-			new_article.save()
-
-			return HttpResponseRedirect('/profile/')
-		return HttpResponse("Error")
+		return HttpResponseRedirect('/profile/')
+	
 
 
 
@@ -192,22 +223,27 @@ class DiscoverView(View):
 
 		date_from = datetime.datetime.now() - datetime.timedelta(days=1)
 				
-		top_articles = Article.objects.filter(pub_date__gte=date_from).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
+		top_articles = Article.objects.filter(pub_date__gte=date_from).exclude(user = request.user).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
 		top_articles_inc = Article.objects.filter(url__in = top_articles).distinct('url')
-
 		
+		# For now, top users will be most followed
+		# in the future, change this:
+		#top_users = 
 		print >> sys.stderr, top_articles_inc
 		context = {
 			'top_articles': top_articles_inc,
+			#'top_users': top_users,
 		}
 		# TODO top users
 		
 		return render(request, self.template_name, context)
 
 
+
+'''
 @login_required
 def follow(request):
-	if 'FollowSubmit' in request.POST:
+	if request.method == 'POST':
 		form = FollowForm(request.POST)
 		if form.is_valid():
 			new_followee = form.cleaned_data['followee']
@@ -219,6 +255,7 @@ def follow(request):
 		else:
 			#TODO errors
 			pass
+'''
 
 class DashboardView(View):
 	template_name = 'core/dashboard.html'

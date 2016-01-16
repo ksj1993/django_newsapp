@@ -1,18 +1,33 @@
 TODO:
-- transfer to digital ocean DONE
-- Nginx / Gunicorn implement DONE
-- implement Postgres DONE
-- fix Beautiful Soup DONE
-- Ajax add card DONE
-- stylize accounts/login, accounts/logout, accounts/signup DONE
-- error handling for invalud urls DONE - needs more testing
-- get email working
-- add profile page
-- add to discover page
-- add alternative to OG PARTIAL
-- like articles
+- add user/profile page
+- add functionality to follow (check if follows list)
+- add users to discover page 
+- add "see more" to discover page
+- like articles (by user and by total article)
+- Top users... for now most followed, later combo of most followed + most liked
 - most recommended / most posted
-- Front page
-- Setup gunicorn.conf UPSTART service. DONE
-- delete article
+- Front page (left menu, description etc)
+- Create footer
+- discover if not following anyone
+- get email working
+- about page
+- resize image in card
+- comments on articles
+
+DONE:
+- transfer to digital ocean 
+- Nginx / Gunicorn implement
+- implement Postgres 
+- fix Beautiful Soup 
+- Ajax add card 
+- stylize accounts/login, accounts/logout, accounts/signup 
+- Setup gunicorn.conf UPSTART service. 
+- article date remove time
+- delete article Ajax
+- Next/Previous page
+- stacking article cards
+
+PARTIAL:
 - website name
+- error handling for invalud urls
+- add alternative to OG 

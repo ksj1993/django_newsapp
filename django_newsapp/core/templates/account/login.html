@@ -38,7 +38,7 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
     {% csrf_token %}
 
 
-
+     {{ form.non_field_errors }}
      {% for field in form %}
       <div class="fieldWrapper">
         <div class="field">
@@ -60,7 +60,7 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
           {% endif %}
        </div>
       {% endfor %}
-
+ 
 
 
     {% if redirect_field_value %}

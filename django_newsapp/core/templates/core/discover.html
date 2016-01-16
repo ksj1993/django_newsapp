@@ -12,11 +12,11 @@
 
 
 <div class="ui main container">
-	<div class="ui header"> <h1> Top Articles </h1> 
+	<div class="ui header"> <h1> Most Posted on Newsapp </h1> 
 	</div>
 
 	{% if top_articles %}
-	<div class="ui four cards">
+	<div class="ui stackable four cards">
 		{% for article in top_articles %}
 		<div class="ui card">
 		  <div class="image">
@@ -33,7 +33,6 @@
 		
 		    <div class="description">
 		    	{{ article.description }} <br><br>
-		    	Posted by {{  }} times
 		    </div>
 		  </div>
 		  
@@ -51,7 +50,7 @@
 		{% endfor %}
 	</div>
 
-	{% else %}
+	{% elif top_users %}
 
 	<!-- ADD DISCOVER LOGIC -->
 
