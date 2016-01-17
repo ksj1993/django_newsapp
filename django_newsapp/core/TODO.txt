@@ -1,22 +1,25 @@
 TODO:
-- Top users... for now most followed, later combo of most followed + most liked
-- paginate dashboard view
+
+
 - add user/profile page
 - add account page
-- add functionality to follow (check if follows list)
-- add users to discover page 
-- add "see more" to discover page
-- like articles (by user and by total article)
 
+- share button
+- Convert discover page from paginate to "see more" 
+- get email working
+- like articles (by user and by total article)
+- on delete fetch another article
+- on friend fetch another friend
 - most recommended / most posted
 - Front page (left menu, description etc)
 - Create footer
 - discover if not following anyone
-- get email working
+
 - about page
 - resize image in card
 - comments on articles
 - add reddit-like logic to discover
+
 
 DONE:
 - transfer to digital ocean 
@@ -30,6 +33,10 @@ DONE:
 - delete article Ajax
 - Next/Previous page
 - stacking article cards
+- Top users... for now most followed, later combo of most followed + most liked
+- paginate dashboard view
+- add functionality to follow (check if follows list)
+- add users to discover page 
 
 PARTIAL:
 - website name

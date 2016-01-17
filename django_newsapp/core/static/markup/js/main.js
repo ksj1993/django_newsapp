@@ -13,6 +13,45 @@ $(function() {
 	    create_article();
 	});
 
+    $('.special.cards .image').dimmer({
+        on: 'hover'
+    });
+
+    $(".friend-button").click(function () {
+        var id = $(this).parent().closest('div[id]').attr('id');
+        console.log(id);
+        add_friend(id)
+    });
+
+    function add_friend(id) {
+        console.log("add friend is working!");
+        $.ajax({
+            url : "/follow/".concat(id), 
+            type : "GET", 
+
+            // handle a successful response
+            success : function(json) {
+                console.log(json); 
+
+                if(json.hasOwnProperty('Error')){
+                    console.log("Error!")
+                    $('#error').html(json.Error);
+                } else {
+                    var element = document.getElementById(id);
+                    element.parentNode.removeChild(element);
+                }
+        
+            },
+
+    
+            error : function(xhr,errmsg,err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                    " <a href='#' class='close'>&times;</a></div>"); 
+                console.log(xhr.status + ": " + xhr.responseText); 
+            }
+        });
+    };
+
     function delete_article(id) {
         console.log("delete article is working!");
         $.ajax({
@@ -41,6 +80,7 @@ $(function() {
             }
         });
     };
+
 
 		// AJAX for posting
 	function create_article() {

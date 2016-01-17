@@ -9,9 +9,11 @@ urlpatterns = [
 	url(r'^$', views.index, name='index'),
 	url(r'^dashboard/', views.DashboardView.as_view()),
 	url(r'^profile/', views.ProfileView.as_view()),
-	url(r'^users/(?P<user_id>[0-9]+)/$', views.user, name='user'),
+	url(r'^users/(?P<username>.+)/$', views.user, name='user'),
 	url(r'^delete/(?P<article_id>[0-9]+)/$', views.delete_article, name='delete'),
 	url(r'^follow/(?P<username>.+)/$', views.follow, name='follow'),
 	url(r'^create_article/', views.create_article),
+	url(r'^account/', views.account),
 	url(r'^discover/', views.DiscoverView.as_view()),
+	url(r'^about/', views.about),
 ]

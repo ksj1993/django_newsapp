@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.generic import View
 from .forms import ArticleForm, FollowForm, ProfileForm
@@ -19,6 +19,9 @@ import helper
 
 def index(request):
 	return render(request, 'core/index.html')
+
+def about(request):
+	return render(request, 'core/about.html')
 
 @login_required
 def create_article(request):
@@ -138,19 +141,28 @@ def delete_article(request, article_id):
 
 @login_required
 def follow(request, username):
-	print >> sys.stderr, username
 	new_followee = User.objects.filter(username = username).first()
 	if not new_followee:
 		raise Http404("Cannot follow user")
-	try:
-		if not UserProfile.objects.get(user = request.user).follows.values().get(id = new_followee.userprofile.id):
-			UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
-			return HttpResponse("Success")
-		else:
-			return HttpResponse("Already following that user")
+	'''try:'''
+	if not UserProfile.objects.get(user = request.user).follows.values().filter(id = new_followee.userprofile.id).first():
+		UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
+		return HttpResponse("Success")
+	else:
+		response_data = {'Error': 'You are already following that user.'}
+		return HttpResponse(
+			json.dumps(response_data),
+			content_type="application/json"
+		)
+'''
 	except:
-		return HttpResponse("Error, could not add follower")
-	
+		response_data = {'Error': 'Could not follow user. Please try again later'}
+		return HttpResponse(
+			json.dumps(response_data),
+			content_type="application/json"
+		)
+	'''
+
 class ProfileView(View):
 	template_name = 'core/profile.html'
 
@@ -197,15 +209,26 @@ class ProfileView(View):
 @login_required
 def user(request, username):
 
-	user_profile = User.objects.get(username = username)
-	user_articles = Article.objects.filter(user = user_profile).all()
+	user_info = User.objects.filter(username = username).first()
 
-	context = {
-		'user_profile': user_profile,
-		'user_articles': user_articles
-	}
+	if user_info is not None:
+		user_profile = UserProfile.objects.get(user = request.user)
+		user_articles = Article.objects.filter(user = user_info).all()
 
-	return render(request, 'core/user.html', context)
+		context = {
+			'user_info': user_info,
+			'user_profile': user_profile,
+			'user_articles': user_articles
+		}
+
+		return render(request, 'core/user.html', context)
+	else:
+		raise Http404("Cannot find user")
+
+@login_required
+def account(request):
+	user = request.user
+	return HttpResponse(user.username)
 
 
 class DiscoverView(View):
@@ -227,7 +250,9 @@ class DiscoverView(View):
 
 		#pub_date__gte=date_from << add in filter
 		top_articles = Article.objects.filter().exclude(user = request.user).values().annotate(count=Count("url")).order_by('-count')
-		top_users = UserProfile.objects.all().values("user__username").annotate(followed_by_count = Count("followed_by")).order_by("-followed_by_count")
+		top_users = UserProfile.objects.all().exclude(followed_by = request.user.userprofile).values("user__username", "id").annotate(followed_by_count = Count("followed_by")).order_by("-followed_by_count")[:20]
+		
+		#print >> sys.stderr, top_users
 
 		if top_articles:	
 

@@ -1,10 +1,65 @@
-{% extends "core/base2.html" %}
+{% extends "core/base3.html" %}
 {% load staticfiles %}
 
 {% block head %}
+
 {% endblock head %}
 
 {% block content %}
 
+<div class="ui middle aligned grid">
+	
+		<div class="one wide column">
+		</div>
+		<div class="four wide column info">
+			<h2> {{ user_info.username }} </h2>
+			<img class="ui image" src="/media/default.png">
+		</div>
+		<div class="ui vertical divider">
+		</div>
+		<div class="ten wide column article">
+		<button class="ui button"> Articles </button>
+		<button class="ui button"> Followers </button>
+		<button class="ui button"> Following </button>
+		<h3> Articles: </h3>
+			{% if user_articles %}
+			<div class="ui two cards">
 
+				{% for article in user_articles %}
+
+
+				<div class="ui card" >
+				  <div class="image">
+				    <img src="/media/{{ article.image }}">
+				  </div>
+				  <div class="content">
+				    <div class="header">
+				    	<a href="{{ article.url }}"> {{ article.title }} </a>
+				    </div>
+				   
+				    <div class="meta">
+				      <a class="group">{{ article.site_name}}</a>
+				    </div>
+				
+				    <div class="description">
+				    	{{ article.description }} <br>
+				    </div>
+				  </div>
+				  
+
+					<div class="ui bottom attached button">
+				      <i class="share icon"></i>
+				      Share
+				    </div>
+				</div>
+
+				{% endfor %}
+			</div>
+
+		{% endif %}
+		</div>
+		<div class="one wide column">
+		</div>
+
+</div>
 {% endblock content %}

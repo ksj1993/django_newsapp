@@ -5,7 +5,7 @@
   
   <script src="{% static 'markup/js/main.js' %}"></script>
 
-
+ 
 {% endblock head %}
 
 {% block content %}
@@ -17,10 +17,12 @@
 
 	{% if top_articles %}
 	<div class="ui stackable four cards">
+
+
 		{% for article in top_articles %}
 
 
-		<div class="ui card">
+		<div class="ui card" >
 		  <div class="image">
 		    <img src="/media/{{ article.image }}">
 		  </div>
@@ -34,7 +36,7 @@
 		    </div>
 		
 		    <div class="description">
-		    	{{ article.description }} <br><br>
+		    	{{ article.description }} <br>
 		    </div>
 		  </div>
 		  
@@ -44,6 +46,10 @@
 		      Share
 		    </div>
 		</div>
+
+
+
+
 
 		{% endfor %}
 	</div>
@@ -69,32 +75,31 @@
 
 	{% if top_users %}
 	<h1> Most Followed Users</h1> 
-	{% for user in top_users %}
-		<div class="ui card">
-		  <div class="content">
-		    <div class="right floated meta">14h</div>
-		    <img class="ui avatar image" src="/images/avatar/large/elliot.jpg"> Elliot
-		  </div>
-		  <div class="image">
-		    <img src="/media/{{ article.image }}">
-		  </div>
-		  <div class="content">
-		  	
-		    <span class="right floated">
-		      <i class="heart outline like icon"></i>
-		      17 likes
-		    </span>
-		    <i class="comment icon"></i>
-		    3 comments
-		  </div>
-		  <div class="extra content">
-		    <div class="ui large transparent left icon input">
-		      <i class="heart outline icon"></i>
-		      <input type="text" placeholder="Add Comment...">
+		<div class="ui four special cards">
+		  {% for user in top_users %}
+		  <div class="card" id="{{ user.user__username }}">
+		    <div class="blurring dimmable image">
+		      <div class="ui dimmer">
+		        <div class="content">
+		          <div class="center">
+		            <div class="ui inverted button friend-button">Add Friend</div>
+		          </div>
+		        </div>
+		      </div>
+		      <img src="/media/default.png">
+		    </div>
+		    <div class="content">
+		      <a class="header" href="/users/{{ user.user__username }}">{{user.user__username}}</a>
+		    </div>
+		    <div class="extra content">
+		      <p>
+		        <i class="users icon"></i>
+		        {{ user.followed_by_count }} Followers
+		      </p>
 		    </div>
 		  </div>
+		 {% endfor %}
 		</div>
-	{% endfor %}
 	{% endif %}
 
 
