@@ -53,6 +53,24 @@
 		</div>
 		{% endfor %}
 	</div>
+
+	<br>
+	<div class="ui right aligned grid">
+		<div class="left floated right aligned four wide column">
+	        {% if followee_articles.has_previous %}
+	            <a href="?page={{ followee_articles.previous_page_number }}">previous</a>
+	        {% endif %}
+		</div>
+		<div class="center floated center aligned four wide column">
+		    Page {{ followee_articles.number }} of {{ followee_articles.paginator.num_pages }}.
+		</div>		  
+		<div class="right floated left aligned four wide column">
+	        {% if followee_articles.has_next %}
+	            <a href="?page={{ followee_articles.next_page_number }}">next</a>
+	        {% endif %}
+		</div>
+	</div>
+
 	{% else %}
 
 	{% endif %}

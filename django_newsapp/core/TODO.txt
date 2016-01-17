@@ -1,11 +1,13 @@
 TODO:
+- Top users... for now most followed, later combo of most followed + most liked
+- paginate dashboard view
 - add user/profile page
 - add account page
 - add functionality to follow (check if follows list)
 - add users to discover page 
 - add "see more" to discover page
 - like articles (by user and by total article)
-- Top users... for now most followed, later combo of most followed + most liked
+
 - most recommended / most posted
 - Front page (left menu, description etc)
 - Create footer
@@ -14,6 +16,7 @@ TODO:
 - about page
 - resize image in card
 - comments on articles
+- add reddit-like logic to discover
 
 DONE:
 - transfer to digital ocean 

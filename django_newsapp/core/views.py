@@ -151,7 +151,6 @@ def follow(request, username):
 	except:
 		return HttpResponse("Error, could not add follower")
 	
-
 class ProfileView(View):
 	template_name = 'core/profile.html'
 
@@ -195,12 +194,10 @@ class ProfileView(View):
 		return HttpResponseRedirect('/profile/')
 	
 
-
-
 @login_required
-def user(request, user_id):
+def user(request, username):
 
-	user_profile = User.objects.get(id = user_id)
+	user_profile = User.objects.get(username = username)
 	user_articles = Article.objects.filter(user = user_profile).all()
 
 	context = {
@@ -222,16 +219,46 @@ class DiscoverView(View):
 
 		date_from = datetime.datetime.now() - datetime.timedelta(days=1)
 				
-		top_articles = Article.objects.filter(pub_date__gte=date_from).exclude(user = request.user).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
-		top_articles_inc = Article.objects.filter(url__in = top_articles).distinct('url')
+		#top_articles = Article.objects.filter(pub_date__gte=date_from).exclude(user = request.user).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
+		#top_articles_inc = Article.objects.filter(url__in = top_articles).distinct('url')
 		
 		# For now, top users will be most followed
 		# in the future, change this:
-		#top_users = 
-		print >> sys.stderr, top_articles_inc
+
+		#pub_date__gte=date_from << add in filter
+		top_articles = Article.objects.filter().exclude(user = request.user).values().annotate(count=Count("url")).order_by('-count')
+		top_users = UserProfile.objects.all().values("user__username").annotate(followed_by_count = Count("followed_by")).order_by("-followed_by_count")
+
+		if top_articles:	
+
+			paginator = Paginator(top_articles, 8)
+			page = request.GET.get('page')
+
+			try: 
+				articles = paginator.page(page)
+			except PageNotAnInteger:
+				articles = paginator.page(1)
+			except EmptyPage:
+				articles = paginator.page(paginator.num_pages)
+			context = {
+				'top_articles': articles,
+				'top_users': top_users,	
+			}
+			return render(request, self.template_name, context)
+		else:
+			# return discovery stuff
+			context = {
+
+			}
+			# for now
+			return render(request, self.template_name, context)
+
+
+		
+
 		context = {
-			'top_articles': top_articles_inc,
-			#'top_users': top_users,
+			'top_articles': top_articles,
+			'top_users': top_users,
 		}
 		# TODO top users
 		
@@ -251,7 +278,30 @@ class DashboardView(View):
 		followee_set_users = [profile.user for profile in followee_set]
 
 		# TODO change to distinct
-		followee_articles = Article.objects.filter(user__in = followee_set_users).all()[:20]
+		followee_articles = Article.objects.filter(user__in = followee_set_users).all()
+
+		if followee_articles:
+			paginator = Paginator(followee_articles, 20)
+			page = request.GET.get('page')
+
+			try: 
+				articles = paginator.page(page)
+			except PageNotAnInteger:
+				articles = paginator.page(1)
+			except EmptyPage:
+				articles = paginator.page(paginator.num_pages)
+			context = {
+				'followee_articles': articles	
+			}
+			return render(request, self.template_name, context)
+		else:
+			# return discovery stuff
+			context = {
+
+			}
+			# for now
+			return render(request, self.template_name, context)
+
 
 		context = {
 		'followee_articles': followee_articles,

@@ -12,15 +12,17 @@
 
 
 <div class="ui main container">
-	<div class="ui header"> <h1> Most Posted on Newsapp </h1> 
+	<div class="ui header"> <h1> Most Posted Today</h1> 
 	</div>
 
 	{% if top_articles %}
 	<div class="ui stackable four cards">
 		{% for article in top_articles %}
+
+
 		<div class="ui card">
 		  <div class="image">
-		    <img src="{{ MEDIA_URL }}{{ article.image.url }}">
+		    <img src="/media/{{ article.image }}">
 		  </div>
 		  <div class="content">
 		    <div class="header">
@@ -37,24 +39,64 @@
 		  </div>
 		  
 
-		  <div class="ui two bottom attached buttons">
-		    <div class="ui button">
-		      Like
-		    </div>
-		    <div class="ui button" href="/create_post/">
+			<div class="ui bottom attached button">
+		      <i class="share icon"></i>
 		      Share
 		    </div>
-		  </div>
-
 		</div>
+
 		{% endfor %}
 	</div>
 
-	{% elif top_users %}
+	<div class="ui right aligned grid">
+		<div class="left floated right aligned four wide column">
+	        {% if top_articles.has_previous %}
+	            <a href="?page={{ top_articles.previous_page_number }}">previous</a>
+	        {% endif %}
+		</div>
+		<div class="center floated center aligned four wide column">
+		    Page {{ top_articles.number }} of {{ top_articles.paginator.num_pages }}.
+		</div>		  
+		<div class="right floated left aligned four wide column">
+	        {% if top_articles.has_next %}
+	            <a href="?page={{ top_articles.next_page_number }}">next</a>
+	        {% endif %}
+		</div>
+	</div>
 
-	<!-- ADD DISCOVER LOGIC -->
 
 	{% endif %}
+
+	{% if top_users %}
+	<h1> Most Followed Users</h1> 
+	{% for user in top_users %}
+		<div class="ui card">
+		  <div class="content">
+		    <div class="right floated meta">14h</div>
+		    <img class="ui avatar image" src="/images/avatar/large/elliot.jpg"> Elliot
+		  </div>
+		  <div class="image">
+		    <img src="/media/{{ article.image }}">
+		  </div>
+		  <div class="content">
+		  	
+		    <span class="right floated">
+		      <i class="heart outline like icon"></i>
+		      17 likes
+		    </span>
+		    <i class="comment icon"></i>
+		    3 comments
+		  </div>
+		  <div class="extra content">
+		    <div class="ui large transparent left icon input">
+		      <i class="heart outline icon"></i>
+		      <input type="text" placeholder="Add Comment...">
+		    </div>
+		  </div>
+		</div>
+	{% endfor %}
+	{% endif %}
+
 
 
 
