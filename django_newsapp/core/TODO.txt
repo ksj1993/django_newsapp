@@ -19,7 +19,7 @@ TODO:
 - resize image in card
 - comments on articles
 - add reddit-like logic to discover
-
+- BUG: delete just posted article without refresh??
 
 DONE:
 - transfer to digital ocean 

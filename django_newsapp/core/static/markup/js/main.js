@@ -105,7 +105,7 @@ $(function() {
                     $('#error').html('Success! Your link has been posted!');
 
                     $('#add-card').prepend(
-                    "  <div class='ui card'>"+
+                    "  <div class='ui card' id='"+json.article_id+"'>"+
                     "    <div class='image'>"+
                     "      <img src='"+ json.article_image +"'>"+
                     "    </div>"+
@@ -122,11 +122,9 @@ $(function() {
                     "        "+ json.article_pub_date+
                     "      </div>"+
                     "    </div>"+
-                    "    <div class='ui two bottom attached buttons'>"+
-                    "      <div class='ui button'>"+
-                    "        Like"+
-                    "      </div>"+
-                    "      <div class='ui button'>"+
+                    "    <div class='ui bottom attached buttons'>"+
+                    "      <div class='ui button delete-button'>"+
+                    "      <i class='delete icon'></i>"+
                     "        Delete"+
                     "      </div>"+
                     "    </div>"+

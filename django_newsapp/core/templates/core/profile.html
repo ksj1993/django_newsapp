@@ -27,9 +27,9 @@
 
 	</div>
 
-	{% if my_articles %}
+	
 	<div class="ui stackable three cards" id="add-card">
-		
+		{% if my_articles %}
 		{% for article in my_articles %}
 		<div class="ui card" id="{{ article.id }}">
 		  <div class="image">
@@ -64,7 +64,10 @@
 		{% endfor %}
 
 	</div>
+	{% endif %}
+
 	<br>
+	{% if my_articles %}
 	<div class="ui right aligned grid">
 		<div class="left floated right aligned four wide column">
 	        {% if my_articles.has_previous %}
@@ -81,8 +84,8 @@
 		</div>
 	</div>
 
-	{% else %}
 	{% endif %}
+	
 
 
 	<br>

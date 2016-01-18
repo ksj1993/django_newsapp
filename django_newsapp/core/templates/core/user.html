@@ -7,34 +7,92 @@
 
 {% block content %}
 
-<div class="ui middle aligned divided grid">
+<div class="ui padded grid">
 	
 		<div class="one wide column">
 		</div>
-		<div class="four wide column info">
+		<div class="four wide column">
 			<h2> {{ user_info.username }} </h2>
 			<img class="ui image" src="/media/default.png">
 		</div>
+		<div class="ui vertical divider"></div>
 		<div class="ten wide column article">
-		<button class="ui button"> Articles </button>
-		<button class="ui button"> Followers </button>
-		<button class="ui button"> Following </button>
-		<h3> Articles: </h3>
+			<a class="ui button" href="/users/{{ user_info.username }}/articles"> Articles </a>
+			<a class="ui button" href="/users/{{ user_info.username }}/followers"> Followers </a>
+			<a class="ui button" href="/users/{{ user_info.username }}/following"> Following </a>
+
 			{% if user_articles %}
+			<h3> Articles </h3>
+					{% for article in user_articles %}
 
-				{% for article in user_articles %}
+						<div class="ui two column padded grid">
+							<div class="four wide column">
+								<img class="ui small image" src="{{ MEDIA_URL }}{{ article.image.url }}">
+							</div>
+							<div class="ten wide column">
+						    <a href="{{ article.url }}"> {{ article.title }} </a> <br>
+						    {{ article.site_name}} <br>
+				    		{{ article.description|truncatechars:150 }} <br>
+				    		</div>
+			    		</div>
+			    		
+					{% endfor %}
 
-					<div class="ui horizontal segments">
-						<img class="ui middle aligned small image" src="{{ MEDIA_URL }}{{ article.image.url }}">
-					    <p><a href="{{ article.url }}"> {{ article.title }} </a></p>
-					    <p>{{ article.site_name}}</p>
-			    		<p>{{ article.description }}</p>
-		    		</div>
-		    		
-				{% endfor %}
-			</div>
+				<br>
+	
+				<div class="ui right aligned grid">
+					<div class="left floated right aligned four wide column">
+				        {% if user_articles.has_previous %}
+				            <a href="?page={{ user_articles.previous_page_number }}">previous</a>
+				        {% endif %}
+					</div>
+					<div class="center floated center aligned four wide column">
+					    Page {{ user_articles.number }} of {{ user_articles.paginator.num_pages }}.
+					</div>		  
+					<div class="right floated left aligned four wide column">
+				        {% if user_articles.has_next %}
+				            <a href="?page={{ user_articles.next_page_number }}">next</a>
+				        {% endif %}
+					</div>
+				</div>
 
-		{% endif %}
+
+			{% elif user_followers %}
+				<h3> Followers </h3>
+				<div class="ui four special cards">
+				  {% for user_profile in user_followers %}
+				  <div class="card" id="{{ user_profile.user.username }}">
+				    <div class="image">
+				      <img src="/media/default.png">
+				    </div>
+				    <div class="content">
+				      <a class="header" href="/users/{{ user_profile.user.username  }}">{{ user_profile.user.username }}</a>
+				    </div>
+				  </div>
+				 {% endfor %}
+				</div>
+				
+			{% elif user_following %}
+				<h3> Following </h3>
+				<div class="ui four special cards">
+				  {% for user_profile in user_following %}
+				  <div class="card" id="{{ user_profile.user.username }}">
+				    <div class="image">
+				      <img src="/media/default.png">
+				    </div>
+				    <div class="content">
+				      <a class="header" href="/users/{{ user_profile.user.username }}">{{ user_profile.user.username }}</a>
+				    </div>
+				  </div>
+				 {% endfor %}
+				</div>
+
+
+			{% else %}
+			{% endif %}
+		</div>
+
+		
 		</div>
 		<div class="one wide column">
 		</div>

@@ -74,6 +74,7 @@ def create_article(request):
 					article_date = datetime.datetime.strptime(str(new_article.pub_date), '%Y-%m-%d').strftime('%b %d, %Y')
 
 					response_data = {
+						'article_id': new_article.id,
 						'article_url': new_article.url,
 						'article_image': new_article.image.url,
 						'article_title': new_article.title,
@@ -207,23 +208,60 @@ class ProfileView(View):
 	
 
 @login_required
-def user(request, username):
-
+def user(request, username, request_type="articles"):
 	user_info = User.objects.filter(username = username).first()
 
 	if user_info is not None:
 		user_profile = UserProfile.objects.get(user = request.user)
-		user_articles = Article.objects.filter(user = user_info).all()
+		if request_type == "articles":
+			user_articles = Article.objects.filter(user = user_info).all()
+			if user_articles:
+				paginator = Paginator(user_articles, 15)
+				page = request.GET.get('page')
 
-		context = {
-			'user_info': user_info,
-			'user_profile': user_profile,
-			'user_articles': user_articles
-		}
+				try: 
+					articles = paginator.page(page)
+				except PageNotAnInteger:
+					articles = paginator.page(1)
+				except EmptyPage:
+					articles = paginator.page(paginator.num_pages)
 
-		return render(request, 'core/user.html', context)
+
+				context = {
+					'user_info': user_info,
+					'user_profile': user_profile,
+					'user_articles': articles
+				}
+				return render(request, 'core/user.html', context)
+			else:
+				pass
+
+		elif request_type == "followers":
+			follower_set = UserProfile.objects.get(user__username = username).followed_by.all()
+			context = {
+				'user_info': user_info,
+				'user_profile': user_profile,
+				'user_followers': follower_set
+			}
+			return render(request, 'core/user.html', context)
+
+
+		elif request_type == "following":
+			followee_set = UserProfile.objects.get(user__username = username).follows.all()
+
+			context = {
+				'user_info': user_info,
+				'user_profile': user_profile,
+				'user_following': followee_set
+			}
+			return render(request, 'core/user.html', context)
+
+		else:
+			raise Http404("Invalid page")
 	else:
 		raise Http404("Cannot find user")
+
+
 
 @login_required
 def account(request):
