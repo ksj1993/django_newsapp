@@ -22,4 +22,7 @@ class SignupForm(forms.Form):
 class ProfileForm(forms.Form):
 	profile = forms.CharField(label='Search for user', max_length=100)
 
+class UploadFileForm(forms.Form):
+	title = forms.CharField(max_length=50)
+	file = forms.ImageField()
 

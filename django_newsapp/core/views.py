@@ -15,13 +15,24 @@ from django.utils import timezone
 from datetime import date
 import datetime
 from urlparse import urlparse
-import helper
+from helper import handle_uploaded_file
 
 def index(request):
 	return render(request, 'core/index.html')
 
 def about(request):
 	return render(request, 'core/about.html')
+
+def upload_file(request):
+	if request.method == 'POST':
+		form = UploadFileForm(request.POST, request.FIlES)
+		if form.is_valid():
+			path = handle_uploaded_file(request.FILES['file'])
+			request.user.userprofile.profile_picture = path
+			return HttpResponseRedirect('/success/url/')
+	else:
+		form = UploadFileFirm()
+	return render(request, 'core/account.html', {'form': form})
 
 @login_required
 def create_article(request):
@@ -209,6 +220,7 @@ class ProfileView(View):
 
 @login_required
 def user(request, username, request_type="articles"):
+
 	user_info = User.objects.filter(username = username).first()
 
 	if user_info is not None:
@@ -232,6 +244,7 @@ def user(request, username, request_type="articles"):
 					'user_profile': user_profile,
 					'user_articles': articles
 				}
+
 				return render(request, 'core/user.html', context)
 			else:
 				pass

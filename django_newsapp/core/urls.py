@@ -17,4 +17,5 @@ urlpatterns = [
 	url(r'^account/', views.account),
 	url(r'^discover/', views.DiscoverView.as_view()),
 	url(r'^about/', views.about),
+	url(r'^account/', views.account),
 ]
