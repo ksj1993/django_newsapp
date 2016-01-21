@@ -1,3 +1,4 @@
 # django_newsapp
 
-New news
+URL: linkerbin.com
+Contributors welcome. Email me at kunaljasty@gmail.com
