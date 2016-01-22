@@ -216,7 +216,7 @@ class ProfileView(View):
 
 @login_required
 def user(request, username, request_type="articles"):
-
+	print >> sys.stderr, username
 	user_info = User.objects.filter(username = username).first()
 
 	if user_info is None:
@@ -250,24 +250,52 @@ def user(request, username, request_type="articles"):
 		
 
 	elif request_type == "followers":
+
 		follower_set = UserProfile.objects.get(user__username = username).followed_by.all()
-		context = {
-			'user_info': user_info,
-			'user_profile': user_profile,
-			'user_followers': follower_set
-		}
-		return render(request, 'core/user.html', context)
+
+		if follower_set:
+
+			paginator = Paginator(follower_set, 15)
+			page = request.GET.get('page')
+
+			try: 
+				followers = paginator.page(page)
+			except PageNotAnInteger:
+				followers = paginator.page(1)
+			except EmptyPage:
+				followers = paginator.page(paginator.num_pages)
+
+			context = {
+				'user_info': user_info,
+				'user_profile': user_profile,
+				'user_followers': followers,
+			}
+
+			return render(request, 'core/user.html', context)
 
 
 	elif request_type == "following":
 		followee_set = UserProfile.objects.get(user__username = username).follows.all()
 
-		context = {
-			'user_info': user_info,
-			'user_profile': user_profile,
-			'user_following': followee_set
-		}
-		return render(request, 'core/user.html', context)
+		if followee_set:
+
+			paginator = Paginator(followee_set, 15)
+			page = request.GET.get('page')
+
+			try: 
+				followees = paginator.page(page)
+			except PageNotAnInteger:
+				followees = paginator.page(1)
+			except EmptyPage:
+				followees = paginator.page(paginator.num_pages)
+
+
+			context = {
+				'user_info': user_info,
+				'user_profile': user_profile,
+				'user_following': followees
+			}
+			return render(request, 'core/user.html', context)
 
 	else:
 		raise Http404("Invalid page")

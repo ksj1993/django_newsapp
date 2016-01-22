@@ -71,6 +71,22 @@
 				  </div>
 				 {% endfor %}
 				</div>
+
+				<div class="ui right aligned grid">
+					<div class="left floated right aligned four wide column">
+				        {% if user_followers.has_previous %}
+				            <a href="?page={{ user_followers.previous_page_number }}">previous</a>
+				        {% endif %}
+					</div>
+					<div class="center floated center aligned four wide column">
+					    Page {{ user_followers.number }} of {{ user_followers.paginator.num_pages }}.
+					</div>		  
+					<div class="right floated left aligned four wide column">
+				        {% if user_followers.has_next %}
+				            <a href="?page={{ user_followers.next_page_number }}">next</a>
+				        {% endif %}
+					</div>
+				</div>
 				
 			{% elif user_following %}
 				<h3> Following </h3>
@@ -86,6 +102,23 @@
 				  </div>
 				 {% endfor %}
 				</div>
+
+				<div class="ui right aligned grid">
+					<div class="left floated right aligned four wide column">
+				        {% if user_following.has_previous %}
+				            <a href="?page={{ user_following.previous_page_number }}">previous</a>
+				        {% endif %}
+					</div>
+					<div class="center floated center aligned four wide column">
+					    Page {{ user_following.number }} of {{ user_following.paginator.num_pages }}.
+					</div>		  
+					<div class="right floated left aligned four wide column">
+				        {% if user_articles.has_next %}
+				            <a href="?page={{ user_following.next_page_number }}">next</a>
+				        {% endif %}
+					</div>
+				</div>
+
 
 
 			{% else %}
