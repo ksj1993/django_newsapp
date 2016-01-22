@@ -17,7 +17,7 @@ class Article(models.Model):
 
 class UserProfile(models.Model):
 	user = AutoOneToOneField('auth.user')
-	profile_picture = models.ImageField(upload_to='images', blank=True)
+	profile_picture = models.ImageField(upload_to='images', default = 'default.png', blank=True)
 	follows = models.ManyToManyField('UserProfile', related_name='followed_by')
 	description = models.CharField(max_length=300, default='')
 	occupation = models.CharField(max_length= 100, default='')

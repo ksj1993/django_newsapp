@@ -7,15 +7,14 @@
 
 {% block content %}
 
-<div class="ui padded grid">
+<div class="ui padded divided grid">
 	
 		<div class="one wide column">
 		</div>
 		<div class="four wide column">
 			<h2> {{ user_info.username }} </h2>
-			<img class="ui image" src="/media/default.png">
+			<img class="ui image" src="{{ MEDIA_URL }}{{ user_profile.profile_picture.url }}">
 		</div>
-		<div class="ui vertical divider"></div>
 		<div class="ten wide column article">
 			<a class="ui button" href="/users/{{ user_info.username }}/articles"> Articles </a>
 			<a class="ui button" href="/users/{{ user_info.username }}/followers"> Followers </a>

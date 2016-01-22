@@ -1,13 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.generic import View
-from .forms import ArticleForm, FollowForm, ProfileForm
+from .forms import *
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Article, UserProfile, ArticleCount
+from .models import *
 from django.utils.html import escape
 import sys, json, datetime
 from scraper import Scraper
@@ -23,16 +23,20 @@ def index(request):
 def about(request):
 	return render(request, 'core/about.html')
 
+@login_required
 def upload_file(request):
+	my_profile = UserProfile.objects.get(user = request.user)
+
 	if request.method == 'POST':
-		form = UploadFileForm(request.POST, request.FIlES)
+		form = UploadFileForm(request.POST, request.FILES)
 		if form.is_valid():
-			path = handle_uploaded_file(request.FILES['file'])
-			request.user.userprofile.profile_picture = path
-			return HttpResponseRedirect('/success/url/')
+			my_profile.profile_picture = form.cleaned_data['image']
+			my_profile.save()
+			print >> sys.stderr, my_profile.user.username + " saved"
+		return render(request, 'core/account.html', {'form': form})
 	else:
-		form = UploadFileFirm()
-	return render(request, 'core/account.html', {'form': form})
+		form = UploadFileForm()
+		return render(request, 'core/account.html', {'form': form})
 
 @login_required
 def create_article(request):
