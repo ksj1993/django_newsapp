@@ -25,17 +25,6 @@ class UserProfile(models.Model):
 	def __unicode__(self):
 		return self.user.username
 
-class ArticleCount(models.Model):
-	url = models.CharField(max_length=500)
-	title = models.CharField(max_length= 300)
-	image_url = models.CharField(max_length=500)
-	image = models.ImageField(upload_to='images', blank=True)
-	site_name = models.CharField(max_length=100)
-	description = models.CharField(max_length=1000)
-
-	count = models.IntegerField(default=0)
-
-
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		UserProfile.objects.create(user=instance)

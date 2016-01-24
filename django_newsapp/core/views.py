@@ -74,20 +74,6 @@ def create_article(request):
 				new_article.real_pub_date = timezone.now()
 				new_article.save()
 
-				# Update article count
-
-				article_count, created = ArticleCount.objects.get_or_create(url=new_article.url)
-				if created:
-					article_count.title = new_article.title
-					article_count.image_url = new_article.image_url
-					article_count.image = new_article.image
-					article_count.site_name = new_article.site_name
-					article_count.description = new_article.description
-					article_count.count = 1
-				else:
-					article_count.count += 1
-
-				article_count.save()
 
 				# adjust date
 				article_date = datetime.datetime.strptime(str(new_article.pub_date), '%Y-%m-%d').strftime('%b %d, %Y')
