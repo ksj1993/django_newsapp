@@ -4,13 +4,13 @@
 {% block head %}
   <link rel="stylesheet" type="text/css" href="{% static 'markup/css/index.css' %}">
 
-  <style>
-    .fixed-width {
-      min-width:100px;
-    }
-  </style>
-  
+  <script>
+    $('ui dropdown')
+     .dropdown()
+    ;
 
+  </script>
+  
 {% endblock head %}
 
 
@@ -18,78 +18,49 @@
 
 
 <!-- Page Contents -->
+<div class="pusher">
   <div class="ui inverted vertical masthead center aligned segment">
 
-        <div class="ui grid">
-          <div class="four wide column">
-            <a href="/about/">About</a>
-            <a href="/contact/">Contact Us</a>
-          </div>
-          <div class="five wide column"> TEMP
-          </div>
-          <div class="five wide column">
-            <form class="ui form" action="/accounts/login/" method="post">
-              {% csrf_token %}
-              <div class="two fields">
-                <div class="field">
-                  <div class="ui left icon input">
-                    <i class="user icon"></i>
-                    <input autofocus="autofocus" id="id_login" maxlength="30" name="login" placeholder="Username" type="text" />
-                  </div>
-                </div>
-                <div class="field">        
-                    <div class="ui left icon input">
-                    <i class="lock icon"></i>
-                    <input id="id_password" name="password" placeholder="Password" type="password" />
-                    </div>
-                </div>
-             </div>
-            </form>
-          </div>
-          <div class="two wide left aligned column fixed-width">
-            <button class="ui button" type="submit">Sign In</button>
-          </div>
+    <div class="ui container">
+      <div class="ui large secondary inverted pointing menu">
+        <a class="toc item">
+          <i class="sidebar icon"></i>
+        </a>
+
+
+
+        {% if user.is_authenticated %}
+        <a class="item" href="/dashboard/">Dashboard</a>
+        <a class="item" href="/profile/">My Links</a>
+        <a class="item" href="/discover/">Discover</a>
+        <div class="right item">
+        <a class="ui inverted button" href="/accounts/logout/">Logout</a>
         </div>
-   
-      <div class="ui grid">
-        <div class="six wide column">
-          <h1 class="ui inverted header">
-            Linkerbin
-          </h1>
-          <h2>Share a Story.</h2>
-          <a class="ui huge primary button" href="/accounts/signup"> Get Started <i class="right arrow icon"></i></a>
+        {% else %}
+
+        <a class="item" href="/about/">About</a>
+        <a class="item" href="/contact/">Contact Us</a>
+        <div class="right item">
+          <a class="ui inverted button" href="/accounts/login/">Login</a>
+          <a class="ui inverted button" href="/accounts/signup/">Sign Up</a>
         </div>
-        <div class="six wide column">
-            <form class="ui large form" id="signup_form" method="post" action="/accounts/signup/">
-               <div class="two fields">
-                <div class="field">
-                  <input id="id_first_name" maxlength="30" name="first_name" placeholder="First Name" type="text" />
-                </div>
-                <div class="field">
-                  <input id="id_last_name" maxlength="30" name="last_name" placeholder="Last Name" type="text" />
-                </div>
-              </div>
-                <div class="field">
-                  <input autofocus="autofocus" id="id_username" maxlength="30" name="username" placeholder="Username" type="text" />
-                </div>
-                <div class="field">
-                  <input id="id_email" name="email" placeholder="E-mail address" type="email" />
-                </div>
-                <div class="field">
-                  <input id="id_password1" name="password1" placeholder="Password" type="password" />
-                </div>
-                <div class="field">
-                  <input id="id_password2" name="password2" placeholder="Password (again)" type="password" />
-                </div>
-                <div class="field">
-                  <input id="id_confirmation_key" maxlength="40" name="confirmation_key" type="hidden" />
-                </div>
-                <button class="ui submit button" type="submit">Sign Up &raquo;</button>
-              </div>
-            </form>
+        {% endif %}
+
       </div>
     </div>
 
+    <div class="ui text container">
+      <h1 class="ui inverted header">
+        Linkerbin
+      </h1>
+      <h2>Share a Story.</h2>
+      <a class="ui huge primary button" href="/accounts/signup"> Get Started <i class="right arrow icon"></i></a>
+    </div>
 
+  </div>
+
+  
+
+</div>
 
 {% endblock content %}
