@@ -1,3 +1,3 @@
 # django_newsapp
 
-Simple for webapp to learn Django. URL: linkerbin.com
+Simple first webapp to learn Django. URL: linkerbin.com
