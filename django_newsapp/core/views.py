@@ -113,47 +113,46 @@ def create_article(request):
 
 @login_required
 def delete_article(request, article_id):
+
 	article = Article.objects.filter(id=article_id).first()
+
 	if not article or article.user != request.user:
 		raise Http404("Cannot delete article")
 
 	try:
 		Article.objects.get(id = article_id, user=request.user).delete()
 		response_data = {'Success': 'Article deleted'}
-		return HttpResponse(
-			json.dumps(response_data),
-			content_type="application/json"
-		)
 	except:
 		response_data = {'Error': 'Could not delete article. Please try again later'}
-		return HttpResponse(
-			json.dumps(response_data),
-			content_type="application/json"
-		)
+
+	return HttpResponse(
+		json.dumps(response_data),
+		content_type="application/json"
+	)
 
 @login_required
 def follow(request, username):
+	response_data = {}
 	new_followee = User.objects.filter(username = username).first()
+
 	if not new_followee:
 		raise Http404("Cannot follow user")
 
 	try:
 		if UserProfile.objects.get(user = request.user).follows.values().filter(id = new_followee.userprofile.id).first():
 			response_data = {'Error': 'You are already following that user.'}
-			return HttpResponse(
-				json.dumps(response_data),
-				content_type="application/json"
-			)
-
+			
 		UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
-		return HttpResponse("Success")
+		
+		response_data = {'Success': 'Success'}
 
 	except:
 		response_data = {'Error': 'Could not follow user. Please try again later'}
-		return HttpResponse(
-			json.dumps(response_data),
-			content_type="application/json"
-		)
+
+	return HttpResponse(
+		json.dumps(response_data),
+		content_type="application/json"
+	)
 		
 
 
@@ -166,7 +165,7 @@ class ProfileView(View):
 		return super(ProfileView, self).dispatch(*args, **kwargs)
 
 	def get(self, request, *args, **kwargs):
-		
+		context = {}
 
 		my_profile = UserProfile.objects.get(user = request.user)
 		my_articles = Article.objects.filter(user = request.user).all().order_by('-real_pub_date')
@@ -189,16 +188,13 @@ class ProfileView(View):
 				'my_profile': my_profile,
 				'my_articles': articles	
 			}
-
-			return render(request, self.template_name, context)
-
 		else:
 			# return discovery stuff
 			context = {
 
 			}
-			# for now
-			return render(request, self.template_name, context)
+			
+		return render(request, self.template_name, context)
 
 	def post(self, request, *args, **kwargs):
 		return HttpResponseRedirect('/profile/')
@@ -206,16 +202,35 @@ class ProfileView(View):
 
 @login_required
 def user(request, username, request_type="articles"):
-	print >> sys.stderr, username
+	
 	user_info = User.objects.filter(username = username).first()
 
 	if user_info is None:
 		raise Http404("Cannot find user")
 
-	user_profile = UserProfile.objects.get(user = request.user)
+	if request_type not in ["articles", "followers", "following"]:
+		raise Http404("Invalid request")
+
+	
+	# Context
+	user_profile = UserProfile.objects.get(user = user_info)
+	user_articles = Article.objects.filter(user = user_info).all()
+	follower_set = UserProfile.objects.get(user__username = username).followed_by.all()
+	followee_set = UserProfile.objects.get(user__username = username).follows.all()
+	article_count = user_articles.count()
+	follower_count = follower_set.count()
+	following_count = followee_set.count()
+
+	context = {
+		'article_count': article_count,
+		'follower_count': follower_count,
+		'following_count': following_count,
+		'user_info': user_info,
+		'user_profile': user_profile,
+
+	}
 
 	if request_type == "articles":
-		user_articles = Article.objects.filter(user = user_info).all()
 
 		if user_articles:
 
@@ -229,19 +244,10 @@ def user(request, username, request_type="articles"):
 			except EmptyPage:
 				articles = paginator.page(paginator.num_pages)
 
+			context.update({'user_articles': articles,})
 
-			context = {
-				'user_info': user_info,
-				'user_profile': user_profile,
-				'user_articles': articles
-			}
-
-			return render(request, 'core/user.html', context)
-		
 
 	elif request_type == "followers":
-
-		follower_set = UserProfile.objects.get(user__username = username).followed_by.all()
 
 		if follower_set:
 
@@ -255,17 +261,9 @@ def user(request, username, request_type="articles"):
 			except EmptyPage:
 				followers = paginator.page(paginator.num_pages)
 
-			context = {
-				'user_info': user_info,
-				'user_profile': user_profile,
-				'user_followers': followers,
-			}
-
-			return render(request, 'core/user.html', context)
-
+			context.update({'user_followers': followers})
 
 	elif request_type == "following":
-		followee_set = UserProfile.objects.get(user__username = username).follows.all()
 
 		if followee_set:
 
@@ -279,23 +277,21 @@ def user(request, username, request_type="articles"):
 			except EmptyPage:
 				followees = paginator.page(paginator.num_pages)
 
+			context.update({'user_following': followees})
+	
 
-			context = {
-				'user_info': user_info,
-				'user_profile': user_profile,
-				'user_following': followees
-			}
-			return render(request, 'core/user.html', context)
+	return render(request, 'core/user.html', context)
 
-	else:
-		raise Http404("Invalid page")
 
 
 
 @login_required
-def account(request):
-	user = request.user
-	return HttpResponse(user.username)
+def account(request, username):
+	request.user
+	if request.user.username != username:
+		return Http404("Can't access page")
+
+	return HttpResponse("TEMP")
 
 
 class DiscoverView(View):
@@ -306,8 +302,9 @@ class DiscoverView(View):
 		return super(DiscoverView, self).dispatch(*args, **kwargs)
 
 	def get(self, request, *args, **kwargs):
+		context = {}
 
-		date_from = datetime.datetime.now() - datetime.timedelta(days=1)
+		date_from = datetime.datetime.now() - datetime.timedelta(days=7)
 				
 		#top_articles = Article.objects.filter(pub_date__gte=date_from).exclude(user = request.user).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
 		#top_articles_inc = Article.objects.filter(url__in = top_articles).distinct('url')
@@ -315,8 +312,7 @@ class DiscoverView(View):
 		# For now, top users will be most followed
 		# in the future, change this:
 
-		#pub_date__gte=date_from << add in filter
-		top_articles = Article.objects.filter().exclude(user = request.user).values().annotate(count=Count("url")).order_by('-count')
+		top_articles = Article.objects.filter(pub_date__gte=date_from).exclude(user = request.user).values().annotate(count=Count("url")).order_by('-count')
 		top_users = UserProfile.objects.all().exclude(followed_by = request.user.userprofile).values("user__username", "id").annotate(followed_by_count = Count("followed_by")).order_by("-followed_by_count")[:20]
 		
 		#print >> sys.stderr, top_users
@@ -338,29 +334,19 @@ class DiscoverView(View):
 				'top_users': top_users,	
 			}
 
-			return render(request, self.template_name, context)
-
 		else:
 			# return discovery stuff
 			context = {
 
 			}
-			# for now
-			return render(request, self.template_name, context)
-
-
-		
-
-		context = {
-		
-		}
-		# TODO top users
+			
 		
 		return render(request, self.template_name, context)
 
 
 
 class DashboardView(View):
+	context = {}
 	template_name = 'core/dashboard.html'
 
 	@method_decorator(login_required)
@@ -384,38 +370,18 @@ class DashboardView(View):
 				articles = paginator.page(1)
 			except EmptyPage:
 				articles = paginator.page(paginator.num_pages)
+
 			context = {
 				'followee_articles': articles	
 			}
-			return render(request, self.template_name, context)
+
 		else:
 			# return discovery stuff
 			context = {
 
 			}
-			# for now
-			return render(request, self.template_name, context)
-
-
-		context = {
-		'followee_articles': followee_articles,
-		'followees': followee_set
-		}
 
 		return render(request, self.template_name, context)
 
-
-
-	def post(self, request, *args, **kwargs):
-
-		if 'ProfileSubmit' in request.POST:
-			form = ProfileForm(request.POST)
-			if form.is_valid():
-				user_profile = form.cleaned_data['profile']
-				user_profile = User.objects.get(username = user_profile)
-				return HttpResponseRedirect("/user/" + str(user_profile.id))
-			else:
-				return HttpResponse('error')
-		return HttpResponse("Something went wrong")
 
 

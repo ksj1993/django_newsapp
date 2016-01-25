@@ -14,11 +14,14 @@
 		<div class="four wide column">
 			<h2> {{ user_info.username }} </h2>
 			<img class="ui image" src="{{ MEDIA_URL }}{{ user_profile.profile_picture.url }}">
+			<br>
+			<p> <a href="/users/{{ user_info.username }}/articles"> Articles {{ article_count }} </a> </p> 
+			<p> <a href="/users/{{ user_info.username }}/followers"> Followers {{ follower_count }} </a> </p>
+			<p> <a href="/users/{{ user_info.username }}/following"> Following {{ following_count }} </a> </p>
+
 		</div>
 		<div class="ten wide column article">
-			<a class="ui button" href="/users/{{ user_info.username }}/articles"> Articles </a>
-			<a class="ui button" href="/users/{{ user_info.username }}/followers"> Followers </a>
-			<a class="ui button" href="/users/{{ user_info.username }}/following"> Following </a>
+			
 
 			{% if user_articles %}
 			<h3> Articles </h3>

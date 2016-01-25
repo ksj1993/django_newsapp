@@ -11,6 +11,7 @@ urlpatterns = [
 	url(r'^profile/', views.ProfileView.as_view()),
 	url(r'^users/(?P<username>[A-Za-z0-9]+)/$', views.user),
 	url(r'^users/(?P<username>[A-Za-z0-9]+)/(?P<request_type>.+)/$', views.user),
+	url(r'^user/(?P<username>[A-Za-z0-9]+)/$', views.account),
 	url(r'^delete/(?P<article_id>[0-9]+)/$', views.delete_article, name='delete'),
 	url(r'^follow/(?P<username>.+)/$', views.follow, name='follow'),
 	url(r'^create_article/', views.create_article),
