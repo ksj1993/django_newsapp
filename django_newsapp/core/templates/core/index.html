@@ -4,13 +4,13 @@
 {% block head %}
   <link rel="stylesheet" type="text/css" href="{% static 'markup/css/index.css' %}">
 
-  <script>
-    $('ui dropdown')
-     .dropdown()
-    ;
-
-  </script>
+  <style>
+    .fixed-width {
+      min-width:100px;
+    }
+  </style>
   
+
 {% endblock head %}
 
 
@@ -18,97 +18,78 @@
 
 
 <!-- Page Contents -->
-<div class="pusher">
   <div class="ui inverted vertical masthead center aligned segment">
 
-    <div class="ui container">
-      <div class="ui large secondary inverted pointing menu">
-        <a class="toc item">
-          <i class="sidebar icon"></i>
-        </a>
-
-
-
-        {% if user.is_authenticated %}
-        <a class="item" href="/dashboard/">Dashboard</a>
-        <a class="item" href="/profile/">My Links</a>
-        <a class="item" href="/discover/">Discover</a>
-        {% else %}
-
-        <a class="item" href="/about/">About</a>
-        <a class="item" href="/contact/">Contact Us</a>
-        <div class="right item">
-          <a class="ui inverted button" href="/accounts/login/">Login</a>
-          <a class="ui inverted button" href="/accounts/signup/">Sign Up</a>
+        <div class="ui grid">
+          <div class="four wide column">
+            <a href="/about/">About</a>
+            <a href="/contact/">Contact Us</a>
+          </div>
+          <div class="five wide column"> TEMP
+          </div>
+          <div class="five wide column">
+            <form class="ui form" action="/accounts/login/" method="post">
+              {% csrf_token %}
+              <div class="two fields">
+                <div class="field">
+                  <div class="ui left icon input">
+                    <i class="user icon"></i>
+                    <input autofocus="autofocus" id="id_login" maxlength="30" name="login" placeholder="Username" type="text" />
+                  </div>
+                </div>
+                <div class="field">        
+                    <div class="ui left icon input">
+                    <i class="lock icon"></i>
+                    <input id="id_password" name="password" placeholder="Password" type="password" />
+                    </div>
+                </div>
+             </div>
+            </form>
+          </div>
+          <div class="two wide left aligned column fixed-width">
+            <button class="ui button" type="submit">Sign In</button>
+          </div>
         </div>
-        {% endif %}
-
+   
+      <div class="ui grid">
+        <div class="six wide column">
+          <h1 class="ui inverted header">
+            Linkerbin
+          </h1>
+          <h2>Share a Story.</h2>
+          <a class="ui huge primary button" href="/accounts/signup"> Get Started <i class="right arrow icon"></i></a>
+        </div>
+        <div class="six wide column">
+            <form class="ui large form" id="signup_form" method="post" action="/accounts/signup/">
+               <div class="two fields">
+                <div class="field">
+                  <input id="id_first_name" maxlength="30" name="first_name" placeholder="First Name" type="text" />
+                </div>
+                <div class="field">
+                  <input id="id_last_name" maxlength="30" name="last_name" placeholder="Last Name" type="text" />
+                </div>
+              </div>
+                <div class="field">
+                  <input autofocus="autofocus" id="id_username" maxlength="30" name="username" placeholder="Username" type="text" />
+                </div>
+                <div class="field">
+                  <input id="id_email" name="email" placeholder="E-mail address" type="email" />
+                </div>
+                <div class="field">
+                  <input id="id_password1" name="password1" placeholder="Password" type="password" />
+                </div>
+                <div class="field">
+                  <input id="id_password2" name="password2" placeholder="Password (again)" type="password" />
+                </div>
+                <div class="field">
+                  <input id="id_confirmation_key" maxlength="40" name="confirmation_key" type="hidden" />
+                </div>
+                <button class="ui submit button" type="submit">Sign Up &raquo;</button>
+              </div>
+            </form>
       </div>
     </div>
 
-    <div class="ui text container">
-      <h1 class="ui inverted header">
-        App-name
-      </h1>
-      <h2>Share a Story.</h2>
-      <a class="ui huge primary button" href="/accounts/signup"> Get Started <i class="right arrow icon"></i></a>
-    </div>
 
-  </div>
-
-  <div class="ui vertical stripe segment">
-    <div class="ui middle aligned stackable grid container">
-      <div class="row">
-        <div class="eight wide column">
-          <h3 class="ui header">Description Header</h3>
-          <p>Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. </p>
-          <h3 class="ui header">Description Header</h3>
-          <p>Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. Description text. </p>
-        </div>
-        <div class="six wide right floated column">
-          <img src="./Homepage - Semantic_files/white-image.png" class="ui large bordered rounded image">
-        </div>
-      </div>
-      <div class="row">
-        <div class="center aligned column">
-          <a class="ui huge button">Check Them Out</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="ui vertical stripe quote segment">
-    <div class="ui equal width stackable internally celled grid">
-      <div class="center aligned row">
-        <div class="column">
-          <h3>"What a Company"</h3>
-          <p>That is what they all say about us</p>
-        </div>
-        <div class="column">
-          <h3>"I shouldn't have gone with their competitor."</h3>
-          <p>
-            <img src="./Homepage - Semantic_files/nan.jpg" class="ui avatar image"> <b>Nan</b> Chief Fun Officer Acme Toys
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="ui vertical stripe segment">
-    <div class="ui text container">
-      <h3 class="ui header">Breaking The Grid, Grabs Your Attention</h3>
-      <p>Instead of focusing on content creation and hard work, we have learned how to master the art of doing nothing by providing massive amounts of whitespace and generic content that can seem massive, monolithic and worth your attention.</p>
-      <a class="ui large button">Read More</a>
-      <h4 class="ui horizontal header divider">
-        <a href="http://semantic-ui.com/examples/homepage.html#">Case Studies</a>
-      </h4>
-      <h3 class="ui header">Did We Tell You About Our Bananas?</h3>
-      <p>Yes I know you probably disregarded the earlier boasts as non-sequitor filler content, but its really true. It took years of gene splicing and combinatory DNA research, but our bananas can really dance.</p>
-      <a class="ui large button">I'm Still Quite Interested</a>
-    </div>
-  </div>
-
-</div>
 
 {% endblock content %}
