@@ -46,15 +46,18 @@ def create_article(request):
 		form = ArticleForm(request.POST)
 
 		if form.is_valid():
+
+			if Article.objects.filter(user = request.user, url = form.cleaned_data['url']):
+				response_data = {'Error': 'You have already posted this article'}
+				return HttpResponse(
+					json.dumps(response_data),
+					content_type="application/json"
+				)
+				
 			
 			try:
 				# Check if user has already posted this article
-				if Article.objects.filter(user = request.user, url = form.cleaned_data['url']):
-					response_data = {'Error': 'You have already posted this article'}
-					return HttpResponse(
-						json.dumps(response_data),
-						content_type="application/json"
-					)
+				
 				
 				# Else create new article
 				new_article = form.save(commit=False)
@@ -171,7 +174,7 @@ class ProfileView(View):
 		my_articles = Article.objects.filter(user = request.user).all().order_by('-real_pub_date')
 
 
-		if my_articles:	
+		if my_articles is not None:	
 
 			paginator = Paginator(my_articles, 20)
 			page = request.GET.get('page')
@@ -230,54 +233,48 @@ def user(request, username, request_type="articles"):
 
 	}
 
-	if request_type == "articles":
+	if request_type == "articles" and user_articles is not None:
 
-		if user_articles:
+		paginator = Paginator(user_articles, 15)
+		page = request.GET.get('page')
 
-			paginator = Paginator(user_articles, 15)
-			page = request.GET.get('page')
+		try: 
+			articles = paginator.page(page)
+		except PageNotAnInteger:
+			articles = paginator.page(1)
+		except EmptyPage:
+			articles = paginator.page(paginator.num_pages)
 
-			try: 
-				articles = paginator.page(page)
-			except PageNotAnInteger:
-				articles = paginator.page(1)
-			except EmptyPage:
-				articles = paginator.page(paginator.num_pages)
-
-			context.update({'user_articles': articles,})
+		context.update({'user_articles': articles})
 
 
-	elif request_type == "followers":
+	elif request_type == "followers" and follower_set is not None:
 
-		if follower_set:
+		paginator = Paginator(follower_set, 15)
+		page = request.GET.get('page')
 
-			paginator = Paginator(follower_set, 15)
-			page = request.GET.get('page')
+		try: 
+			followers = paginator.page(page)
+		except PageNotAnInteger:
+			followers = paginator.page(1)
+		except EmptyPage:
+			followers = paginator.page(paginator.num_pages)
 
-			try: 
-				followers = paginator.page(page)
-			except PageNotAnInteger:
-				followers = paginator.page(1)
-			except EmptyPage:
-				followers = paginator.page(paginator.num_pages)
+		context.update({'user_followers': followers})
 
-			context.update({'user_followers': followers})
+	elif request_type == "following" and followee_set is not None:
 
-	elif request_type == "following":
+		paginator = Paginator(followee_set, 15)
+		page = request.GET.get('page')
 
-		if followee_set:
+		try: 
+			followees = paginator.page(page)
+		except PageNotAnInteger:
+			followees = paginator.page(1)
+		except EmptyPage:
+			followees = paginator.page(paginator.num_pages)
 
-			paginator = Paginator(followee_set, 15)
-			page = request.GET.get('page')
-
-			try: 
-				followees = paginator.page(page)
-			except PageNotAnInteger:
-				followees = paginator.page(1)
-			except EmptyPage:
-				followees = paginator.page(paginator.num_pages)
-
-			context.update({'user_following': followees})
+		context.update({'user_following': followees})
 	
 
 	return render(request, 'core/user.html', context)
@@ -317,7 +314,7 @@ class DiscoverView(View):
 		
 		#print >> sys.stderr, top_users
 
-		if top_articles:	
+		if top_articles is not None:	
 
 			paginator = Paginator(top_articles, 8)
 			page = request.GET.get('page')
@@ -360,7 +357,7 @@ class DashboardView(View):
 		# TODO change to distinct
 		followee_articles = Article.objects.filter(user__in = followee_set_users).all()
 
-		if followee_articles:
+		if followee_articles is not None:
 			paginator = Paginator(followee_articles, 20)
 			page = request.GET.get('page')
 

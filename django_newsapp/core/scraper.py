@@ -13,7 +13,7 @@ class Scraper:
 			cj = CookieJar()
 			opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 			self.webpage = opener.open(url_page)
-			self.soup = BeautifulSoup(self.webpage)
+			self.soup = BeautifulSoup(self.webpage, "html.parser")
 		except:
 			raise
 

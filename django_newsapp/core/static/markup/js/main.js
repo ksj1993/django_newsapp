@@ -13,7 +13,18 @@ $(function() {
 	    create_article();
 	});
 
-    $('.special.cards .image').dimmer({
+    $('.profile-picture').dimmer({
+        on: 'hover'
+    });
+
+    $( "#profile-button" ).dialog({
+            autoOpen: false,
+            draggable: false,
+            resizable: false,
+            modal: true,
+    });
+
+     $('.special.cards .image').dimmer({
         on: 'hover'
     });
 

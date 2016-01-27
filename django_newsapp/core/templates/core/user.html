@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block head %}
-
+  <script src="{% static 'markup/js/main.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
@@ -13,8 +13,24 @@
 		</div>
 		<div class="four wide column">
 			<h2> {{ user_info.username }} </h2>
+			{% ifequal user.username user_info.username %}
+			<div class="ui blurring dimmable image profile-picture">
+		      <div class="ui dimmer">
+		        <div class="content">
+		          <div class="center">
+		            <div class="ui inverted button" id="profile-button"> Change Picture </div>
+		          </div>
+		        </div>
+		      </div>
+			  <img class="ui image" src="{{ MEDIA_URL }}{{ user_profile.profile_picture.url }}">		    
+			</div>
+
+			{% else %}
 			<img class="ui image" src="{{ MEDIA_URL }}{{ user_profile.profile_picture.url }}">
-			<br>
+
+			{% endifequal %}
+
+			<br><br>
 			<p> <a href="/users/{{ user_info.username }}/articles"> Articles {{ article_count }} </a> </p> 
 			<p> <a href="/users/{{ user_info.username }}/followers"> Followers {{ follower_count }} </a> </p>
 			<p> <a href="/users/{{ user_info.username }}/following"> Following {{ following_count }} </a> </p>
