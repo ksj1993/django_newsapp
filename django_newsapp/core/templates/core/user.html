@@ -8,7 +8,6 @@
 {% block content %}
 
 <div class="ui padded divided grid">
-	
 		<div class="one wide column">
 		</div>
 		<div class="four wide column">
@@ -150,3 +149,15 @@
 
 </div>
 {% endblock content %}
+
+{% block extra %}
+<div id="picture-div"> 
+	<form action="/account/" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Submit" />
+	</form>
+
+</div>
+
+{% endblock extra %}

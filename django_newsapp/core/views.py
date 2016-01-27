@@ -144,10 +144,9 @@ def follow(request, username):
 	try:
 		if UserProfile.objects.get(user = request.user).follows.values().filter(id = new_followee.userprofile.id).first():
 			response_data = {'Error': 'You are already following that user.'}
-			
-		UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
-		
-		response_data = {'Success': 'Success'}
+		else:
+			UserProfile.objects.get(user = request.user).follows.add(new_followee.userprofile)
+			response_data = {'Success': 'Success'}
 
 	except:
 		response_data = {'Error': 'Could not follow user. Please try again later'}
@@ -207,7 +206,7 @@ class ProfileView(View):
 def user(request, username, request_type="articles"):
 	
 	user_info = User.objects.filter(username = username).first()
-
+	form = UploadFileForm()
 	if user_info is None:
 		raise Http404("Cannot find user")
 
@@ -230,8 +229,15 @@ def user(request, username, request_type="articles"):
 		'following_count': following_count,
 		'user_info': user_info,
 		'user_profile': user_profile,
-
+		'form': form,
 	}
+
+	if request.method == 'POST':
+		form = UploadFileForm(request.POST, request.FILES)
+		if form.is_valid():
+			my_profile.profile_picture = form.cleaned_data['image']
+			my_profile.save()
+
 
 	if request_type == "articles" and user_articles is not None:
 
@@ -303,15 +309,13 @@ class DiscoverView(View):
 
 		date_from = datetime.datetime.now() - datetime.timedelta(days=7)
 				
-		#top_articles = Article.objects.filter(pub_date__gte=date_from).exclude(user = request.user).values('url').annotate(count=Count("url")).order_by('-count')[:20].values('url')
-		#top_articles_inc = Article.objects.filter(url__in = top_articles).distinct('url')
 		
 		# For now, top users will be most followed
 		# in the future, change this:
 
 		top_articles = Article.objects.filter(pub_date__gte=date_from).exclude(user = request.user).values().annotate(count=Count("url")).order_by('-count')
-		top_users = UserProfile.objects.all().exclude(followed_by = request.user.userprofile).values("user__username", "id").annotate(followed_by_count = Count("followed_by")).order_by("-followed_by_count")[:20]
-		
+		#top_users = UserProfile.objects.all().exclude(followed_by = request.user.userprofile).values("user__username", "id").annotate(followed_by_count = Count("followed_by")).order_by("-followed_by_count")[:20]
+		top_users = UserProfile.objects.all().values("user__username", "id").annotate(followed_by_count = Count("followed_by")).order_by("-followed_by_count")[:20]
 		#print >> sys.stderr, top_users
 
 		if top_articles is not None:	

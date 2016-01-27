@@ -17,11 +17,19 @@ $(function() {
         on: 'hover'
     });
 
-    $( "#profile-button" ).dialog({
+    
+    $( "#picture-div" ).dialog({
             autoOpen: false,
             draggable: false,
             resizable: false,
             modal: true,
+    });
+
+    $("#profile-button").click(function () {
+        console.log("button click!")  // sanity check
+
+        $("#picture-div").dialog('open');
+
     });
 
      $('.special.cards .image').dimmer({

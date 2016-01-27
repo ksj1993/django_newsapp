@@ -49,8 +49,8 @@
 	{% if top_users %}
 	<h1> Most Followed Users</h1> 
 		<div class="ui four special cards">
-		  {% for user in top_users %}
-		  <div class="card" id="{{ user.user__username }}">
+		  {% for userprof in top_users %}
+		  <div class="card" id="{{ userprof.user__username }}">
 		    <div class="blurring dimmable image">
 		      <div class="ui dimmer">
 		        <div class="content">
@@ -62,12 +62,12 @@
 		      <img src="/media/default.png">
 		    </div>
 		    <div class="content">
-		      <a class="header" href="/users/{{ user.user__username }}">{{user.user__username}}</a>
+		      <a class="header" href="/users/{{ userprof.user__username }}">{{userprof.user__username}}</a>
 		    </div>
 		    <div class="extra content">
 		      <p>
 		        <i class="users icon"></i>
-		        {{ user.followed_by_count }} Followers
+		        {{ userprof.followed_by_count }} Followers
 		      </p>
 		    </div>
 		  </div>
