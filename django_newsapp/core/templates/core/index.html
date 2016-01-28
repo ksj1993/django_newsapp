@@ -2,66 +2,52 @@
 {% load staticfiles %}
 
 {% block head %}
-  <link rel="stylesheet" type="text/css" href="{% static 'markup/css/index.css' %}">
+ <link rel="stylesheet" type="text/css" href="{% static 'markup/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'markup/css/cover.css' %}">
+ 
 
-  <script>
-    $('ui dropdown')
-     .dropdown()
-    ;
+  <script src="{% static 'markup/js/bootstrap.min.js' %}"></script>
 
-  </script>
   
 {% endblock head %}
 
 
 {% block content %}
 
+ <div class="site-wrapper">
 
-<!-- 
-  <div class="ui inverted vertical masthead center aligned segment">
+      <div class="site-wrapper-inner">
 
-    <div class="ui container">
-      <div class="ui large secondary inverted pointing menu">
-        <a class="toc item">
-          <i class="sidebar icon"></i>
-        </a>
+        <div class="cover-container">
 
+          <div class="masthead clearfix">
+            <div class="inner">
+              <h3 class="masthead-brand">Linkerbin</h3>
+              <nav>
+                <ul class="nav masthead-nav">
+                  <li class="active"><a href="/accounts/login/">Login</a></li>
+                  <li><a href="/about/#">About</a></li>
+                  <li><a href="/contact/">Contact</a></li>
+                </ul>
+              </nav>
+            </div>
+          </div>
 
+          <div class="inner cover">
+            <h1 class="cover-heading">Share a story.</h1>
+            <p class="lead">Description text</p>
+            <p class="lead">
+              <a href="/accounts/signup" class="btn btn-lg btn-default">Sign up</a>
+            </p>
+          </div>
 
-        {% if user.is_authenticated %}
-        <a class="item" href="/dashboard/">Dashboard</a>
-        <a class="item" href="/profile/">My Links</a>
-        <a class="item" href="/discover/">Discover</a>
-        <div class="right item">
-        <a class="ui inverted button" href="/accounts/logout/">Logout</a>
+          
+
         </div>
-        {% else %}
-
-        <a class="item" href="/about/">About</a>
-        <a class="item" href="/contact/">Contact Us</a>
-        <div class="right item">
-          <a class="ui inverted button" href="/accounts/login/">Login</a>
-          <a class="ui inverted button" href="/accounts/signup/">Sign Up</a>
-        </div>
-        {% endif %}
 
       </div>
-    </div>
-
-    <div class="ui text container">
-      <h1 class="ui inverted header">
-        Linkerbin
-      </h1>
-      <h2>Share a Story.</h2>
-      <a class="ui huge primary button" href="/accounts/signup"> Get Started <i class="right arrow icon"></i></a>
-    </div>
 
   </div>
 
-  
-
-</div>
-
--->
 
 {% endblock content %}

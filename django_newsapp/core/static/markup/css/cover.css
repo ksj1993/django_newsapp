@@ -151,6 +151,7 @@ body {
   .mastfoot,
   .cover-container {
     width: 100%; /* Must be percentage or pixels for horizontal alignment */
+    min-width: 900px;
   }
 }
 
