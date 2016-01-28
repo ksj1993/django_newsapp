@@ -19,6 +19,7 @@ $(function() {
 
     
     $( "#picture-div" ).dialog({
+
             autoOpen: false,
             draggable: false,
             resizable: false,
@@ -28,7 +29,10 @@ $(function() {
     $("#profile-button").click(function () {
         console.log("button click!")  // sanity check
 
-        $("#picture-div").dialog('open');
+        //$("#picture-div").dialog('open');
+        $('.ui.modal')
+            .modal('show')
+        ;
 
     });
 

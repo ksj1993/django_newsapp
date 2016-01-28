@@ -15,7 +15,7 @@ urlpatterns = [
 	url(r'^delete/(?P<article_id>[0-9]+)/$', views.delete_article, name='delete'),
 	url(r'^follow/(?P<username>.+)/$', views.follow, name='follow'),
 	url(r'^create_article/', views.create_article),
-	url(r'^account/', views.upload_file),
+	url(r'^account/', views.account),
 	url(r'^discover/', views.DiscoverView.as_view()),
 	url(r'^about/', views.about),
 ]

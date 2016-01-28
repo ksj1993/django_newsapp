@@ -1,4 +1,4 @@
-{% extends "core/base2.html" %}
+{% extends "core/base3.html" %}
 
 {% load staticfiles %}
 
@@ -7,13 +7,21 @@
 {% endblock head %}
 
 {% block content %}
-<div class="ui main container">
+<div class="ui padded divided grid">
+	<div class="two wide column"></div>
+	<div class="two wide column"> 
+		<h3> Settings </h3>
+		<p> Account </p>
+		<p> Privacy </p>
+		<p> Notifications </p>
+	</div>
+	<div class="twelve wide column"> 
+	<p> Email </p>
+	<p><a href="{% url 'account_reset_password' %}"> Change Password </a></p>
+	<p> Logout </p>
 
-	<form action="/account/" method="post" enctype="multipart/form-data">
-		{% csrf_token %}
-		{{ form.as_p }}
-		<input type="submit" value="Submit" />
-	</form>
+	<p> Change Profile Picture </p>
+	</div>
 
-</div>
+
 {% endblock content %}

@@ -3,15 +3,31 @@
 
 {% block head %}
   <script src="{% static 'markup/js/main.js' %}"></script>
+
+<style>
+  .fixed-width-0 {
+    min-width: 250px;
+  }
+
+  .fixed-width-1 {
+    min-width: 600px;
+  }
+
+  .fixed-width-2 {
+  	min-width: 850px;
+  }
+
+</style>
+
 {% endblock head %}
 
 {% block content %}
 
-<div class="ui padded divided grid">
+<div class="ui padded divided grid fixed-width-2">
 		<div class="one wide column">
 		</div>
-		<div class="four wide column">
-			<h2> {{ user_info.username }} </h2>
+		<div class="four wide column fixed-width-0">
+			<h3> {{ user_info.username }} </h3>
 			{% ifequal user.username user_info.username %}
 			<div class="ui blurring dimmable image profile-picture">
 		      <div class="ui dimmer">
@@ -42,7 +58,7 @@
 			<h3> Articles </h3>
 					{% for article in user_articles %}
 
-						<div class="ui two column padded grid">
+						<div class="ui two column padded grid fixed-width-1">
 							<div class="four wide column">
 								<img class="ui small image" src="{{ MEDIA_URL }}{{ article.image.url }}">
 							</div>
@@ -148,16 +164,17 @@
 		</div>
 
 </div>
-{% endblock content %}
-
-{% block extra %}
-<div id="picture-div"> 
+<div class="ui modal"> 
+  <i class="close icon"></i>
 	<form action="/account/" method="post" enctype="multipart/form-data">
 		{% csrf_token %}
 		{{ form.as_p }}
-		<input type="submit" value="Submit" />
+		<button class="ui button" type="submit" value="Submit">Submit</button>
 	</form>
-
 </div>
+{% endblock content %}
+
+{% block extra %}
+
 
 {% endblock extra %}

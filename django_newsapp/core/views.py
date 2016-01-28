@@ -24,6 +24,17 @@ def about(request):
 	return render(request, 'core/about.html')
 
 @login_required
+def account(request):
+	my_profile = UserProfile.objects.get(user = request.user)
+
+	context = {
+		'my_profile': my_profile,
+	}
+
+	return render(request, 'core/account.html', context)
+
+
+@login_required
 def upload_file(request):
 	my_profile = UserProfile.objects.get(user = request.user)
 
@@ -32,8 +43,8 @@ def upload_file(request):
 		if form.is_valid():
 			my_profile.profile_picture = form.cleaned_data['image']
 			my_profile.save()
-			print >> sys.stderr, my_profile.user.username + " saved"
-		return render(request, 'core/account.html', {'form': form})
+			redirect_url = 'core/users/' + request.user.username
+		return render(request, redirect_url, {'form': form})
 	else:
 		form = UploadFileForm()
 		return render(request, 'core/account.html', {'form': form})
@@ -284,17 +295,6 @@ def user(request, username, request_type="articles"):
 	
 
 	return render(request, 'core/user.html', context)
-
-
-
-
-@login_required
-def account(request, username):
-	request.user
-	if request.user.username != username:
-		return Http404("Can't access page")
-
-	return HttpResponse("TEMP")
 
 
 class DiscoverView(View):
