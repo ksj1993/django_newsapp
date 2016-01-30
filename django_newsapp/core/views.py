@@ -59,6 +59,7 @@ def create_article(request):
 		if form.is_valid():
 
 			if Article.objects.filter(user = request.user, url = form.cleaned_data['url']):
+				print >> sys.stderr, "Already posted"
 				response_data = {'Error': 'You have already posted this article'}
 				return HttpResponse(
 					json.dumps(response_data),
@@ -67,10 +68,10 @@ def create_article(request):
 				
 			
 			try:
-				# Check if user has already posted this article
 				
-				
-				# Else create new article
+				print >> sys.stderr, "Got here"
+		
+				#Create new article
 				new_article = form.save(commit=False)
 
 				cleaner = urlparse(new_article.url)
