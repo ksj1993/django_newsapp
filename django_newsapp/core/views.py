@@ -51,7 +51,8 @@ def upload_file(request):
 
 @login_required
 def create_article(request):
-	
+
+
 	if request.method == 'POST':
 		
 		form = ArticleForm(request.POST)
@@ -69,8 +70,6 @@ def create_article(request):
 			
 			try:
 				
-				print >> sys.stderr, "Got here"
-		
 				#Create new article
 				new_article = form.save(commit=False)
 
@@ -86,7 +85,7 @@ def create_article(request):
 				new_article.site_name = scraper.scrapeSitename()
 				new_article.description = scraper.scrapeDescr()
 				new_article.pub_date = date.today()
-				new_article.real_pub_date = timezone.now()
+				new_article.real_pub_date = datetime.datetime.today()
 				new_article.save()
 
 
@@ -110,14 +109,14 @@ def create_article(request):
 					json.dumps(response_data),
 					content_type="application/json"
 				)
-
+				
 			except:
 				response_data = {'Error': 'Error posting link. Please try again'}
 				return HttpResponse(
 					json.dumps(response_data),
 					content_type="application/json"
 				)
-
+			
 
 	response_data = {'Error': 'Error posting link. Please try again'}
 	return HttpResponse(

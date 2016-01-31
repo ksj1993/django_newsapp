@@ -127,14 +127,14 @@ $(function() {
                     console.log("Sucess!");
                     $('#error').html('Success! Your link has been posted!');
 
-                    $('#add-card').prepend(
+                    $('#add-card').empty().prepend(
                     "  <div class='ui card' id='"+json.article_id+"'>"+
                     "    <div class='image'>"+
                     "      <img src='"+ json.article_image +"'>"+
                     "    </div>"+
                     "    <div class='content'>" +
                     "      <div class='header'>"+
-                    "        <a href='"+ json.article_url+"'> "+ json.article_title+" </a>"+
+                    "        <a href='"+json.article_url+"'> "+ json.article_title+" </a>"+
                     "      </div>"+
                     "      <div class='meta'>"+
                     "        <a class='group'>"+ json.article_site_name+"</a>"+
